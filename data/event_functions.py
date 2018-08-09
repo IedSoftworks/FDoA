@@ -1,0 +1,335 @@
+from data import functions;
+from data import gui_content
+from functools import partial
+from collections import defaultdict
+from tkinter import *;
+from tkinter import font;
+import random;
+
+
+def caracter_manager(gui, car, mode, arg="none"):
+	if mode == "check_use_caracter":
+		x_bool = False;
+		for x in functions.get_gamedata()["caracters"]:
+			if functions.get_gamedata()["caracters"][x] == car:
+				x_bool=True;
+
+		if x_bool:
+			return True;
+		else:
+			return False;
+	elif mode == "set_caracter":
+		gamedata = functions.get_gamedata();
+		check = True
+		if len(gamedata["caracters"]) >= 4:
+			result = gui.game("fullteam", [car], True);
+			check = result[0];
+			gamedata = result[1];
+		if check:
+			gamedata["caracters"].append(car);
+			print(str(gamedata));
+		functions.save_gamedata(gamedata);
+	elif mode == "get_car_data":
+		persons = functions.get_persons_content();
+		return persons[car];
+	elif mode == "givedisc":
+		json = functions.json_file_decode("user\\found_description.json");
+		json.append(car);
+		functions.json_file_encode("user\\found_description.json");
+	
+def get_group(mode):
+	return list(functions.get_gamedata()["caracters"].keys());
+def randomize(value, if_value = False):
+	value1 = random.random() * 1000000;
+	if value1 < value:
+		if if_value:
+			return [True, value1]
+		else:
+			return True;
+	else:
+		if if_value:
+			return [False, value1];
+		else:
+			return False;
+
+def add_items(items):
+	inv = functions.get_inventory();
+	for item, amount in items.items():
+		test = True
+		try:
+			inv[item]
+		except NameError:
+			test = False;
+		except KeyError:
+			test = False;
+		except IndexError:
+			test = False;
+			
+		if test:
+			inv[item] += amount;
+		else:	
+			inv[item] = amount;
+		
+	functions.save_inventory(inv);
+
+def check_item(item):
+	inv = functions.get_inventory();
+	try:
+		amount = inv[item];
+	except:
+		amount = 0;
+	return amount;
+
+def remove_items(item, amount):
+	inv = functions.get_inventory();
+	inv[item] -= amount
+	if inv[item] < 0:
+		inv[item] =0;
+	functions.save_inventory(inv);
+	
+# Important functions
+'''def trade(classi, gui, trading):
+	gui.clear_screen();
+	classi.gui = gui;
+	hintergrund1 = gui.hintergrund();
+	hintergrund1.pack();
+	
+	shoppinglist1 = Canvas(hintergrund1, width=functions.pro_size(80,0), height=functions.pro_size(80,0))
+	shoppinglist1.place(x=functions.pro_size(10,0), y=functions.pro_size(15,0), anchor=NW);
+	shoppinglist = functions.VerticalScrolledFrame(shoppinglist1);
+	shoppinglist.place(width=functions.pro_size(80,0), height=functions.pro_size(80,0));
+	
+	xrow = 0;
+	for item, value in trading:
+		xrow += 1
+		setattr(self, "trader_canvas"+str(xrow), Canvas(shoppinglist.interior, width=functions.pro_size(79,0)))'''
+
+def textbox(classi, text, button):
+	classi.gui.clear_screen();
+	hintergrund1 = classi.gui.hintergrund();
+	
+	hintergrund1.pack();
+	textbox = Canvas(hintergrund1, height=functions.pro_size(40,1), width=functions.pro_size(80,0), bg="Gold2",highlightthickness=0);
+	textbox.place(x=functions.pro_size(10,0), y=functions.pro_size(5,1));
+	Message(textbox, text=text, font=gui_content.ch_fontsize("14"), width=functions.pro_size(78,0), bg="Gold2").place(x=functions.pro_size(2,0));
+
+	buttonbox = Canvas(hintergrund1, height=functions.pro_size(30,1), width=functions.pro_size(50,0), bg="Gold2")
+	buttonbox.place(x=functions.pro_size(50,0), y=functions.pro_size(80,1), anchor=CENTER);
+	columnx = 0;
+	rowx = 1;
+	for x in button:
+		columnx += 1;
+		if columnx == 3:
+			rowx +=1;
+			columnx=1;
+		
+		try:
+			x[2];
+		except IndexError:
+			x.append("navy");
+		
+		exec("Button(buttonbox, text=\""+x[0]+"\", command=classi."+x[1]+", bg=\""+x[2]+"\", width=functions.pro_size(4,0), height=functions.pro_size(0.6,1), font=gui_content.ch_fontsize(\"16\"), fg=\"white\").grid(row=rowx, column=columnx)");
+			
+def fight_screen(classi, content):
+	class selfi():
+		def __init__(self):
+			self.true = True;
+	
+	self = selfi();
+	self.gui = classi.gui;
+	self.gui.clear_screen();
+	self.classi = classi;
+	hintergrund1 = self.gui.hintergrund();
+	hintergrund1.pack();
+	self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
+	self.commands.place(y=functions.pro_size(80,1));
+	self.main_screen = Canvas(hintergrund1, bg="yellow", width=860, height=550);
+	self.main_screen.place(x=20, y=30);
+	
+	self.content = content;
+	
+	self.fight = {};
+	self.fight["alli"] = {};
+	self.fight["enemys"] = {};
+	
+	allis = Canvas(self.main_screen, bd=0, bg="yellow",width=400, height=500, highlightthickness=0)
+	allis.place(x=15, y=50);
+	Label(self.main_screen, text="Team", font=gui_content.ch_fontsize("20"),bg="yellow").place(x=20, y=10);
+	self.banner = Label(hintergrund1, text="Kampf gestartet...", bg="gold2",font=gui_content.ch_fontsize("16"));
+	self.banner.place(x=450, anchor=N);
+	
+	rowx = 0
+	self.allilist={};
+	for caracter, content in functions.get_gamedata()["caracters"].items():
+		rowx +=1;
+		setattr(self, "alli"+str(rowx)+"selectedc", Canvas(allis, width=20, height=20, bg="yellow", highlightthickness=0));
+		setattr(self, "alli"+str(rowx)+"selectedcircle", getattr(self, "alli"+str(rowx)+"selectedc").create_oval(1, 1, 20, 20, fill="red", outline="yellow"));
+		getattr(self, "alli"+str(rowx)+"selectedc").grid(column=1, row = rowx);
+		setattr(self, "alli"+str(rowx)+"name", Label(allis, bg="yellow", text=caracter, font=gui_content.ch_fontsize("14")))
+		getattr(self, "alli"+str(rowx)+"name").grid(column=2, row = rowx);
+		setattr(self, "alli"+str(rowx)+"hp", Label(allis, bg="yellow", text="HP: "+str(content["hp"]), font=gui_content.ch_fontsize("14")));
+		getattr(self, "alli"+str(rowx)+"hp").grid(column=3, row = rowx);
+		self.fight["alli"][str(rowx)]={"hp":content["hp"], "name":caracter};
+	
+	Label(self.main_screen, text="Enemys", font=gui_content.ch_fontsize("20"),bg="yellow").place(x=450, y=10);
+	self.enemyscreen = Canvas(self.main_screen, bd=0, bg="yellow",width=400, height=500, highlightthickness=0)
+	self.enemyscreen.place(x=445, y=50);
+	rows = 0;
+	self.enemylist = {};
+	for name, value in self.content["enemys"].items():
+		try:
+			value["multi"];
+		except:
+			value["multi"] = 1;
+		for x in range(value["multi"]):
+			x +=1;
+			rows += 1;
+			setattr(self, "enemys"+str(rows)+"name", Label(self.enemyscreen, bg="yellow", text=name, font=font.Font(family=('MS', 'Sans', 'Serif'), size=14)));
+			getattr(self, "enemys"+str(rows)+"name").grid(column=1, row=rows);
+			setattr(self, "enemys"+str(rows)+"hp", Label(self.enemyscreen, font=gui_content.ch_fontsize("14"),bg="yellow", text="HP: "+str(value["hp"])));
+			getattr(self, "enemys"+str(rows)+"hp").grid(column=2, row=rows);
+			self.fight["enemys"][str(rows)]={"hp":value["hp"], "name":name, "attacks":value["attacks"]}
+	
+	def create_attack_list(self, modi, id, value):
+		if modi== "add":
+			if len(self.attacklist) < value["target"]:
+				self.attacklist.append(id);
+		
+		title = "";
+		for ids in self.attacklist:
+			title += self.fight["enemys"][str(ids)]["name"]+",";
+		title = title[:-1];
+		self.banner.config(text="Kampf: Wähle "+str(value["target"])+" Gegner: "+title);
+		if len(self.attacklist) == value["target"]:
+			self.banner.config(text="Kampf: "+str(value["target"])+" ausgewählt.");
+			attack2(self, value);
+				
+	def ai(self):
+		id = random.choice(list(self.fight["enemys"].keys()));
+		attack = random.choice(list(self.fight["enemys"][str(id)]["attacks"].keys()));
+		dmg = str(self.fight["enemys"][str(id)]["attacks"][str(attack)]["dmg"]);
+		target = random.choice(list(self.fight["alli"].keys()));
+		
+		self.banner.config(text="Kampf: "+self.fight["enemys"][id]["name"]+" trifft "+self.fight["alli"][str(target)]["name"]+" mit "+attack+". "+str(dmg)+" Schaden");
+		make_dmg(self, target, {"dmg":int(dmg)}, "alli");
+		
+	def make_dmg(self, id, value, mode):
+		self.fight[mode][str(id)]["hp"] -= value["dmg"];
+		car_menu = False;
+		if self.fight[mode][str(id)]["hp"]<= 0: 
+			self.fight[mode][str(id)]["hp"] = 0;
+			getattr(self, mode+str(id)+"name").config(fg="red", font=font.Font(family=('MS', 'Sans', 'Serif'), size=14, overstrike=1));
+			getattr(self, mode+str(id)+"hp").config(text="HP: "+str(self.fight[mode][str(id)]["hp"]),fg="red", font=font.Font(family=('MS', 'Sans', 'Serif'), size=14, overstrike=1) );
+			if self.fight_caracter == self.fight[mode][str(id)]["name"]:
+				print("if workxs")
+				car_menu = True;
+			self.fight[mode].pop(str(id));
+			if car_menu:
+				select_caracters_menus(self);
+		else:
+			getattr(self, mode+str(id)+"hp").config(text="HP: "+str(self.fight[mode][str(id)]["hp"]));
+	
+	def attack(self, attack, value):
+		if value["target"]!="all":
+			self.attacklist = [];
+			self.banner.config(text="Kampf: Wähle "+str(value["target"])+" Gegner:");
+			for id in self.fight["enemys"]:
+				setattr(self, "enemys"+str(id)+"attackbutton",Button(self.enemyscreen, bg="yellow", text="Angriff", font=gui_content.ch_fontsize("14"), command=partial(create_attack_list, self, "add",id, value)));
+				getattr(self, "enemys"+str(id)+"attackbutton").grid(column=3, row=id);
+		else:
+			attack2(self, value);
+	
+	def attack2(self, value):
+		for id in self.fight["enemys"]:
+			getattr(self, "enemys"+str(id)+"attackbutton").grid_forget();
+			
+		if value["target"]!= "all":
+			for id in self.attacklist:
+				make_dmg(self, id, value, "enemys");
+		else:
+			for id in self.fight["enemys"]:
+				make_dmg(self, id, value, "enemys");
+		
+		def ai_start():
+			ai(self);
+			actions_phase(self);
+		
+		if len(self.fight["enemys"]) == 0:
+			self.commands.forget();
+			self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
+			self.commands.place(y=functions.pro_size(80,1));
+			exec("Button(self.commands, text=\"Gewonnen.\", font=gui_content.ch_fontsize(\"16\"), command=self.classi."+self.content["win"]["func"]+").place(y=functions.pro_size(10,1), x=functions.pro_size(50,0), anchor=CENTER)")
+		else:
+			self.banner.config(text="Bitte warten...");
+			self.commands.forget();
+			self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
+			self.commands.place(y=functions.pro_size(80,1));
+			self.banner.after(3000, ai_start);
+	
+	def actions_phase(self):
+		self.commands.forget();
+		self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
+		self.commands.place(y=functions.pro_size(80,1));
+		
+		attacklist = Canvas(self.commands, bg="white");
+		attacklist.place(y=functions.pro_size(1.5,1), x=functions.pro_size(37,0), width=functions.pro_size(60,0), height=functions.pro_size(18,1));
+		
+		rowg = 0;
+		for attacks, dmg in caracter_manager(self.gui, self.fight_caracter, "get_car_data")["attacks"].items():
+			rowg += 1;
+			Button(attacklist, relief=FLAT, bg="white",text=" - "+attacks, command=partial(attack, self, attacks, dmg), font=gui_content.ch_fontsize("15")).grid(row=rowg, sticky=W);
+		
+		Button(self.commands, text="Kämpfer ändern", font=gui_content.ch_fontsize("16"), command=partial(select_caracters_menus, self)).place(x=functions.pro_size(5,0), y=functions.pro_size(5,1));
+	
+	def run(self):
+		self.commands.forget();
+		self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
+		self.commands.place(y=functions.pro_size(80,1));
+		chance = self.content["runaway"]["chance"];
+		rand_value = random.random() * 100;
+		print(rand_value);
+		if rand_value < chance:
+			exec("Button(self.commands, text=\"Erfolgreich.\", font=gui_content.ch_fontsize(\"16\"), command=self.classi."+self.content["runaway"]["func"]+").place(y=functions.pro_size(10,1), x=functions.pro_size(50,0), anchor=CENTER)");
+		else:
+			def ai_start():
+				ai(self);
+			
+			self.fight_caracter = self.fight["alli"]["1"]["name"];
+			self.fight_caracter_id = "1";
+			
+			self.banner.config(text="Flucht fehlgeschlagen...");
+			self.banner.after(2000, ai_start);
+	
+	def select_caracters_menus(self):
+		self.commands.forget();
+		self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
+		self.commands.place(y=functions.pro_size(80,1));
+		
+		def selectcaracter(caracter, id, self):
+			self.fight_caracter = caracter;
+			self.fight_caracter_id = id;
+			for carid in range(len(self.fight["alli"])):
+				carid += 1;
+				getattr(self, "alli"+str(carid)+"selectedc").itemconfig(getattr(self, "alli"+str(carid)+"selectedcircle"),fill="red");
+			getattr(self, "alli"+str(id)+"selectedc").itemconfig(getattr(self, "alli"+str(id)+"selectedcircle"),fill="green");
+			actions_phase(self);
+		if len(self.fight["alli"]) != 0:
+			caracters = Canvas(self.commands, bg="red", width=functions.pro_size(75,0), height=functions.pro_size(15,1));
+			columnx=0;
+			rowx=0;
+			id =0;
+			for key, value in self.fight["alli"].items():
+				columnx += 1;
+				if columnx == 3:
+					rowx +=1;
+					columnx=1;
+				Button(caracters, text=value["name"], width=functions.pro_size(3, 0), height=functions.pro_size(0.5,1), command=partial(selectcaracter, value["name"], key, self)).grid(column=columnx, row=rowx);
+		
+			caracters.place(x=functions.pro_size(50,0),y=functions.pro_size(10,1), anchor=CENTER);
+			
+			Button(self.commands, text="Fliehen", command=partial(run, self), font=gui_content.ch_fontsize("16")).place(x=5,y=5);
+			
+		else:
+			Label(self.main_screen, text="VERLOREN",font=gui_content.ch_fontsize("50")).place(x=50, y=50, anchor=NW);
+	
+	select_caracters_menus(self);
