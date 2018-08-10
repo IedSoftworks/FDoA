@@ -1,3 +1,4 @@
 
 commit.bat
 events/*
+*.pyc
