@@ -46,6 +46,7 @@ def register(data):
 	placejson[data["name"]] = place;
 	save_places(placejson);
 <<<<<<< HEAD
+<<<<<<< HEAD
 def enterplace(gui, name):
 	gd = functions.get_gamedata();
 	place = get_place(name);
@@ -97,6 +98,8 @@ def storage(gui):
 	print("");
 def clickable(gui, event):
 	gui.game(event[1], event[0]);
+=======
+>>>>>>> parent of 0519859... place_functions, arbeit am Hub
 =======
 >>>>>>> parent of 0519859... place_functions, arbeit am Hub
 def get_places():
