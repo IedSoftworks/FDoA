@@ -108,6 +108,8 @@ def trade(classi, gui, trading):
 	def buy(item, value):
 		buyer = Canvas(hintergrund1, width=functions.pro_size(40,0), height=functions.pro_size(7.5,1))
 		buyer.place(x=functions.pro_size(50,0), anchor=N, y=functions.pro_size(3.75,1));
+		Label(hintergrund1, text=item, font=gui_content.ch_fontsize("16"), bg="gold2").place(x=functions.pro_size(50,0), y=functions.pro_size(1,1), anchor=N);
+		
 
 	xrow = 0;
 	for item, value in trading.items():
@@ -116,7 +118,7 @@ def trade(classi, gui, trading):
 		getattr(selfi, "trader_canvas"+str(xrow)).grid(row = xrow)
 		Label(getattr(selfi, "trader_canvas"+str(xrow)), text=item, font=gui_content.ch_fontsize("30"), bg="green", fg="white").place(x=functions.pro_size(5,0), y=functions.pro_size(5,1), anchor=W)
 		Label(getattr(selfi, "trader_canvas"+str(xrow)), text=value+" Geld", bg="green", fg="white").place(x=functions.pro_size(39.5,0), y=functions.pro_size(9.5,1), anchor=S)
-		Button(getattr(selfi, "trader_canvas"+str(xrow)), text="Kaufen?", command=partial(buy, item, value));
+		Button(getattr(selfi, "trader_canvas"+str(xrow)), text="Kaufen?", command=partial(buy, item, value)).place(x=functions.pro_size(79,0), y=functions.pro_size(5,1), anchor=E);
 def textbox(classi, text, button):
 	classi.gui.clear_screen();
 	hintergrund1 = classi.gui.hintergrund();
