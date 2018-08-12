@@ -1,1 +1,1 @@
-__all__ = ["hub"];
+__all__ = ["hub","testtrader"];
