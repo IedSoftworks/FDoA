@@ -1,1 +1,1 @@
-{"caracters": {"Shepard": {"hp": 100}}, "inventory": {"Granate": 3}}
+{"places": {"Test": {"options": {"events": {"enterf": "", "entern": "", "exit": "", "clickable": {}, "random": {"Test": "HallO"}}}, "garage": {}}}}
