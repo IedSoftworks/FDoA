@@ -1,11 +1,7 @@
 import random;
 import os;
-import math;
+import collections;
 from data import functions;
-from tkinter import *;
-from tkinter import font;
-from functools import partial
-from data import gui_content;
 
 def register(data):
 	placejson = get_places();
@@ -18,44 +14,38 @@ def register(data):
 		#		- enterf: Event, das beim ersten Betreten ausgeführt wird.
 		#		- entern: Event, das bei jedem weiteren Betreten ausgeführt wird.
 		#		- random: Array von Events, die beim Aufenthalt in diesem Ort zufällig auftreten können.
-		#			stil: [["Ordner","Event"],["Ordner","Event"]]
 		#		- clickable: Array von Events, die beim Aufenthalt in diesem Ort per Knopfdruck ausgelöst werden können.
-		#			stil: [["Ordner","Event","Knopftext"],["Ordner","Event","Knopftext"]]
 		#	- garage: 
 		#		- storage: Array von Fahrzeugen, die sich von Anfang an in der Garage dieses Ortes befinden sollen.
 		#		- size:	Anzahl der Stellplätze in dieser Garage.
-		#		- disable: Auf True setzen wenn dieser Ort keine Garage anbieten soll.
 		#	- storage:
 		#		- storage: Array von Items, die sich von Anfang an in dem Lagerplatz dieses Ortes befinden sollen.
 		#		- size: Anzahl der Items, die dieser Lagerplatz fassen können soll.
-		#		- disable: Auf True setzen, wenn dieser Ort keinen Lagerplatz anbieten soll.
 	# --#										#
-	print(data);
 	check = True;								#
 	try:										#
-		exec("print("+str(data["garage"])+")");		#
+		exec("print("+data["garage"]+")");		#
 	except:										#
 		check = False;							#
 	if not check:									#
-		place["garage"] = {"storage":{},"size":1,"disable":False};	#
+		place["garage"] = {"storage":{},"size":1};	#
 	else:											#
 		place["garage"] = data["garage"];		#
-	if place["garage"]["disable"]:
-		place["garage"]["size"]=1;
 	# --#										#
 	check = True;								#
 	try:										#
-		exec("print("+str(data["storage"])+")");		#
+		exec("print("+data["storage"]+")");		#
 	except:										#
 		check = False;							#
 	if not check:									#	
-		place["storage"] = {"storage":{},"size":16,"disable":False};#
+		place["storage"] = {"storage":{},"size":16};#
 	else:											#
 		place["storage"] = data["storage"];		#
 	# --#										#
-	place["system"] = {"first":True};
+	
 	placejson[data["name"]] = place;
 	save_places(placejson);
+<<<<<<< HEAD
 def enterplace(gui, name):
 	gd = functions.get_gamedata();
 	place = get_place(name);
@@ -107,6 +97,8 @@ def storage(gui):
 	print("");
 def clickable(gui, event):
 	gui.game(event[1], event[0]);
+=======
+>>>>>>> parent of 0519859... place_functions, arbeit am Hub
 def get_places():
 	try:
 		return functions.get_gamedata()["places"];
@@ -115,6 +107,4 @@ def get_places():
 def get_place(name):
 	return get_places()[name];
 def save_places(array):
-	var = functions.get_gamedata();
-	var["places"] = array;
-	functions.save_gamedata(var);
+	functions.add_json_string("user\gamedata.json", "places", array);
