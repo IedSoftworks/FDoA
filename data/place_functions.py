@@ -90,16 +90,16 @@ def hub(gui):
 		Button(Text, text="Lager", state=DISABLED, command=partial(storage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=1,padx=5,pady=5);
 	if len(place["options"]["events"]["clickable"]) > 0:
 		Label(Text, text="Aktionen:", font=gui_content.ch_fontsize(20), bg="Gold2").grid(row=3,sticky=W,columnspan=3);
-		Scroll = Canvas(Text, bg="Gold2", highlightthickness=0, width=functions.pro_size(80,0), height=functions.pro_size(10,1));
-		Scroll.grid(row=4,sticky=W,columnspan=200);
-		Scroll1 = functions.VerticalScrolledFrame(Scroll);
-		Scroll1.place(x=0,y=0,width=functions.pro_size(100,0));
+		scrollbar = Scrollbar(Text);
+		scrollbar.grid(row=4, column=2, sticky=E);
+		c = Canvas();
+		c.pack();
+		Scroll = Listbox(c, yscrollcommand=scrollbar.set, bg="Gold2", highlightthickness=0, width=functions.pro_size(80,0), height=functions.pro_size(10,1));
 		key = 0;
 		for value in place["options"]["events"]["clickable"]:
-			row = math.floor(key / 6);
-			column = key % 6;
-			key+=1;
-			Button(Scroll1.interior, text=value[2], command=partial(clickable, gui, value), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=row,column=column,padx=5,pady=5);
+			Scroll.insert(END, "Hi");
+		Scroll.pack(side=LEFT, fill=BOTH);
+		scrollbar.config(command=Scroll.yview)
 			
 def garage(gui):
 	print("");
