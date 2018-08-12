@@ -2,6 +2,11 @@ import random;
 import os;
 import collections;
 from data import functions;
+from data import gui_content
+from tkinter import *;
+from tkinter import font;
+import math;
+from functools import partial
 
 def register(data):
 	placejson = get_places();
@@ -24,44 +29,50 @@ def register(data):
 	# --#										#
 	check = True;								#
 	try:										#
-		exec("print("+data["garage"]+")");		#
+		exec("print("+str(data["garage"])+")");		#
 	except:										#
 		check = False;							#
 	if not check:									#
-		place["garage"] = {"storage":{},"size":1};	#
+		place["garage"] = {"storage":{},"size":1,"disable":False};	#
 	else:											#
 		place["garage"] = data["garage"];		#
 	# --#										#
 	check = True;								#
 	try:										#
-		exec("print("+data["storage"]+")");		#
+		exec("print("+data["word"]+")");		#
+	except:										#
+		check = False;							#
+	if not check:								#
+		place["word"] = "in";					#
+	else:										#
+		place["word"] = data["word"];		#
+	# --#										#
+	check = True;								#
+	try:										#
+		exec("print("+str(data["storage"])+")");		#
 	except:										#
 		check = False;							#
 	if not check:									#	
-		place["storage"] = {"storage":{},"size":16};#
+		place["storage"] = {"storage":{},"size":16,"disable":False};#
 	else:											#
 		place["storage"] = data["storage"];		#
 	# --#										#
 	
+	place["system"] = {"first":True};
 	placejson[data["name"]] = place;
 	save_places(placejson);
-<<<<<<< HEAD
-<<<<<<< HEAD
 def enterplace(gui, name):
 	gd = functions.get_gamedata();
 	place = get_place(name);
 	gd["place"] = name;
-	if place["system"]["first"]:
+	if place["system"]["first"] and place["options"]["events"]["enterf"][0] != "None":
 		gd["places"][name]["system"]["first"] = False;
 		functions.save_gamedata(gd);
-		if place["options"]["events"]["enterf"][0] != "None":
-			gui.game(place["options"]["events"]["enterf"][1], place["options"]["events"]["enterf"][0], ["enterf", name]);
-		else:
-			hub(gui);
+		gui.game(place["options"]["events"]["enterf"][1], place["options"]["events"]["enterf"][0], ["place-enterf", name]);
 	else:
 		functions.save_gamedata(gd);
 		if place["options"]["events"]["entern"][0] != "None":
-			gui.game(place["options"]["events"]["entern"][1], place["options"]["events"]["entern"][0], ["entern", name]);
+			gui.game(place["options"]["events"]["entern"][1], place["options"]["events"]["entern"][0], ["place-entern", name]);
 		else:
 			hub(gui);
 def hub(gui):
@@ -70,10 +81,21 @@ def hub(gui):
 	back.pack();
 	gd = functions.get_gamedata();
 	place = get_place(gd["place"]);
-	
+	try:
+		exec("print("+gd["place_hub_timer"]+")");
+	except:
+		gd["place_hub_timer"] = 0;
+	if not gd["place_hub_timer"] == 0:
+		if not gd["place_hub_timer"] == (place["options"]["hubtimer"]+1):
+			gd["place_hub_timer"]+=1;
+			functions.save_gamedata(gd);
+			event(gui);
+		else:
+			gd["place_hub_timer"]=1;
+			functions.save_gamedata(gd);
 	Text = Canvas(back, bg="Gold2", highlightthickness=0);
 	Text.place(x=functions.pro_size(10,0), y=functions.pro_size(10,1));
-	Label(Text, text="Willkommen in "+gd["place"], font=gui_content.ch_fontsize(32), bg="Gold2").grid(row=1,columnspan=3,sticky=W);
+	Label(Text, text="Willkommen "+place["word"]+" "+gd["place"], font=gui_content.ch_fontsize(32), bg="Gold2").grid(row=1,columnspan=3,sticky=W);
 	Button(Text, text="Garage", command=partial(garage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,padx=5,pady=5);
 	if not place["storage"]["disable"]:
 		Button(Text, text="Lager", command=partial(storage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=1,padx=5,pady=5);
@@ -81,27 +103,91 @@ def hub(gui):
 		Button(Text, text="Lager", state=DISABLED, command=partial(storage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=1,padx=5,pady=5);
 	if len(place["options"]["events"]["clickable"]) > 0:
 		Label(Text, text="Aktionen:", font=gui_content.ch_fontsize(20), bg="Gold2").grid(row=3,sticky=W,columnspan=3);
-		scrollbar = Scrollbar(Text);
-		scrollbar.grid(row=4, column=2, sticky=E);
-		c = Canvas();
-		c.pack();
-		Scroll = Listbox(c, yscrollcommand=scrollbar.set, bg="Gold2", highlightthickness=0, width=functions.pro_size(80,0), height=functions.pro_size(10,1));
 		key = 0;
 		for value in place["options"]["events"]["clickable"]:
-			Scroll.insert(END, "Hi");
-		Scroll.pack(side=LEFT, fill=BOTH);
-		scrollbar.config(command=Scroll.yview)
-			
+			row = math.floor(key / 6) + 4;
+			column = (key % 6);
+			if key < 61:
+				Button(Text, text=value[2], command=partial(clickable, gui, value), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0), height=functions.pro_size(.05,1)).grid(row=row,column=column,padx=5,pady=5);
+			elif key == 61:
+				Label(Text, text="Maximum von 60 Aktionen überschritten.", font=gui_content.ch_fontsize(20), bg="Gold2", fg="red").grid(row=14,sticky=W,columnspan=6);	
+			key+=1;	
+	Button(Text, text=gd["place"]+" verlassen", command=partial(leave, gui), bg="red", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,padx=5,pady=5);	
+	if len(place["options"]["events"]["random"]) > 0:
+		Button(Text, text="Weitergehen", command=partial(event, gui), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,column=1,padx=5,pady=5);	
+	else:
+		Button(Text, text="Weitergehen", state=DISABLED, command=partial(event, gui), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,column=1,padx=5,pady=5);		
 def garage(gui):
-	print("");
+		gui.clear_screen();
+		hintergrund = gui.hintergrund();
+		hintergrund.pack();
+		
+		Label(hintergrund, text="Garage von "+functions.get_gamedata()["place"], font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
+		Button(hintergrund, text="Zurück", command=partial(hub, gui), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(5,1), x=functions.pro_size(50,0), anchor=N);
+		
+		inventar1 = Canvas(hintergrund, width=functions.pro_size(90,0), height=functions.pro_size(80,1));
+		inventar1.place(anchor=N, x=functions.pro_size(50,0), y=functions.pro_size(10,1));
+		inventar = functions.VerticalScrolledFrame(inventar1);
+		inventar.place(width=functions.pro_size(90,0), height=functions.pro_size(80,1));
+		
+		inventar_content = get_place(functions.get_gamedata()["place"])["garage"]["storage"];
+		if len(inventar_content.items()) == 0:
+			Label(inventar.interior, text="Leer", font=gui_content.ch_fontsize("32")).place(x=functions.pro_size(50,0), y=functions.pro_size(50,1), anchor=CENTER);
+		else:
+		
+			xrow = 0;
+			for value in inventar_content:
+				xrow +=1
+				newcanvas = {};
+				newcanvas[xrow] = Canvas(inventar.interior, bg="green", width=functions.pro_size(90,0), height=functions.pro_size(9,1));
+				newcanvas[xrow].grid(row=xrow);
+				Label(newcanvas[xrow], text=value["name"], font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
+				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
 def storage(gui):
+		gui.clear_screen();
+		hintergrund = gui.hintergrund();
+		hintergrund.pack();
+	
+		Label(hintergrund, text="Lagerplatz von "+functions.get_gamedata()["place"], font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
+		Button(hintergrund, text="Zurück", command=partial(hub, gui), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(5,1), x=functions.pro_size(50,0), anchor=N);
+		
+		inventar1 = Canvas(hintergrund, width=functions.pro_size(90,0), height=functions.pro_size(80,1));
+		inventar1.place(anchor=N, x=functions.pro_size(50,0), y=functions.pro_size(10,1));
+		inventar = functions.VerticalScrolledFrame(inventar1);
+		inventar.place(width=functions.pro_size(90,0), height=functions.pro_size(80,1));
+		
+		inventar_content = get_place(functions.get_gamedata()["place"])["storage"]["storage"];
+		if len(inventar_content.items()) == 0:
+			Label(inventar.interior, text="Keine Items", fg="black", font=gui_content.ch_fontsize("32")).place(x=functions.pro_size(50,0), y=functions.pro_size(50,1), anchor=CENTER);
+		else:
+		
+			xrow = 0;
+			for inv, value in inventar_content.items():
+				xrow +=1
+				newcanvas = {};
+				newcanvas[xrow] = Canvas(inventar.interior, bg="green", width=functions.pro_size(90,0), height=functions.pro_size(9,1));
+				newcanvas[xrow].grid(row=xrow);
+				Label(newcanvas[xrow], text=inv, font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
+				Label(newcanvas[xrow], text="Anzahl: "+str(value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
+def enterveh(gui):
 	print("");
+def event(gui):
+	gd = functions.get_gamedata();
+	events = get_place(gd["place"])["options"]["events"]["random"];
+	event = random.SystemRandom().choice(events);
+	gui.game(event[1], event[0], ["place-random", gd["place"]]);
+def leave(gui):
+	gd = functions.get_gamedata();
+	place = get_place(gd["place"]);
+	del gd["place"];
+	functions.save_gamedata(gd);
+	if place["options"]["events"]["exit"][0] != "None":
+		gui.game(place["options"]["events"]["exit"][1], place["options"]["events"]["exit"][0], ["place-exit", name]);
+	else:
+		gui.new_text();
 def clickable(gui, event):
-	gui.game(event[1], event[0]);
-=======
->>>>>>> parent of 0519859... place_functions, arbeit am Hub
-=======
->>>>>>> parent of 0519859... place_functions, arbeit am Hub
+	gd = functions.get_gamedata();
+	gui.game(event[1], event[0], ["clickable", gd["place"]]);
 def get_places():
 	try:
 		return functions.get_gamedata()["places"];

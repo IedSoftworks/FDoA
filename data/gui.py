@@ -8,6 +8,7 @@ from data import event_functions;
 import ctypes
 import random
 import inspect
+from data import place_functions;
 
 class GUI():
 	#System Start
@@ -242,6 +243,13 @@ class GUI():
 			manager.run(self, game_folder, game_file, game_arg, await_return);
 
 	def new_text(self, used_text="X"):
+		check=True;
+		try:
+			exec("print("+functions.get_gamedata()["place"]+")");
+		except:
+			check=False;
+		if check:
+			place_functions.hub(self.gui);
 		alreadyused = functions.json_file_decode("user\\used_texts.json")[self.activemod];
 		if used_text != "X":
 			boo_i = False;
