@@ -3,6 +3,7 @@ import os;
 import collections;
 from data import functions;
 from data import gui_content
+from data import container;
 from tkinter import *;
 from tkinter import font;
 import math;
@@ -68,7 +69,8 @@ def register(data, override=False):
 		place["description"] = data["description"];	#
 	# --#										#
 	
-	place["system"] = {"first":True};
+	con = container.register({"inv":place["storage"]["storage"],"name":"Lager von "+data["name"]});
+	place["system"] = {"first":True,"container":con};
 	check=False;
 	try:
 		exec("print(\""+str(placejson[data["name"]])+"\")");
@@ -168,7 +170,7 @@ def hub(gui, travel=False, returned=False):
 		Label(Text, text="Willkommen "+place["word"]+" "+gd["place"], font=gui_content.ch_fontsize(32), bg="Gold2").grid(row=1,columnspan=3,sticky=W);
 		Button(Text, text="Garage", command=partial(garage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,padx=5,pady=5);
 		if not place["storage"]["disable"]:
-			Button(Text, text="Lager", command=partial(storage, gui, place), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=1,padx=5,pady=5);
+			Button(Text, text="Lager", command=partial(storage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=1,padx=5,pady=5);
 		else:
 			Button(Text, text="Lager", state=DISABLED, command=partial(storage, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=1,padx=5,pady=5);
 		if not gd["place"] in get_gps():
@@ -242,31 +244,7 @@ def garage(gui):
 				Label(newcanvas[xrow], text=value["name"], font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
 				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, gui, value, (xrow-1)), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
 def storage(gui):
-		gui.clear_screen();
-		hintergrund = gui.hintergrund();
-		hintergrund.pack();
-	
-		Label(hintergrund, text="Lagerplatz von "+functions.get_gamedata()["place"], font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
-		Button(hintergrund, text="Zurück", command=partial(hub, gui, False, True), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(5,1), x=functions.pro_size(50,0), anchor=N);
-		
-		inventar1 = Canvas(hintergrund, width=functions.pro_size(90,0), height=functions.pro_size(80,1));
-		inventar1.place(anchor=N, x=functions.pro_size(50,0), y=functions.pro_size(10,1));
-		inventar = functions.VerticalScrolledFrame(inventar1);
-		inventar.place(width=functions.pro_size(90,0), height=functions.pro_size(80,1));
-		
-		inventar_content = get_place(functions.get_gamedata()["place"])["storage"]["storage"];
-		if len(inventar_content.items()) == 0:
-			Label(inventar.interior, text="Keine Items", fg="black", font=gui_content.ch_fontsize("32")).place(x=functions.pro_size(50,0), y=functions.pro_size(50,1), anchor=CENTER);
-		else:
-		
-			xrow = 0;
-			for inv, value in inventar_content.items():
-				xrow +=1
-				newcanvas = {};
-				newcanvas[xrow] = Canvas(inventar.interior, bg="green", width=functions.pro_size(90,0), height=functions.pro_size(9,1));
-				newcanvas[xrow].grid(row=xrow);
-				Label(newcanvas[xrow], text=inv, font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
-				Label(newcanvas[xrow], text="Anzahl: "+str(value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
+	container.openxx(get_place(functions.get_gamedata()["place"])["system"]["container"], gui); 
 def enterveh(gui, vehicle, key=-1):
 		gui.clear_screen();
 		hintergrund = gui.hintergrund();
