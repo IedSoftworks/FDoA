@@ -1,1 +1,1 @@
-__all__ = ["fighttest","inv"];
+__all__ = ["inv"];

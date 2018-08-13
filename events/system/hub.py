@@ -2,6 +2,8 @@ from data import event_functions
 from data import functions
 from data import gui_content
 from tkinter import *;
+from functools import partial;
+from data import place_functions;
 
 class init():
 	def __init__(self, gui):
@@ -9,12 +11,23 @@ class init():
 		self.hub_menu();
 		
 	def hub_menu(self):
+		gd = functions.get_gamedata();
 		self.gui.clear_screen();
 		hintergrund = self.gui.hintergrund();
 		hintergrund.pack();
-		menu = Canvas(hintergrund, bg="gold2");
+		menu = Canvas(hintergrund, bg="gold2", highlightthickness=0);
 		menu.place(x=functions.pro_size(5,0), y=functions.pro_size(5,1));
 		Button(menu, text="Inventar", command=self.inventory, width=functions.pro_size(1,0), font=gui_content.ch_fontsize(16)).grid(row=1);
+		check=True;
+		try:
+			exec("print(\""+str(gd["travel"])+"\")");
+		except:
+			check=False;
+		if check:
+			Label(menu, text="Aktuelle Reise: \nZiel: "+gd["travel"]["destination"]+"\nAnkunft in: "+str(gd["travel"]["steps"]), bg="Gold2", font=gui_content.ch_fontsize(16)).grid(row=1,column=1,sticky=W);
+		else:
+			Label(menu, text="Aktuelle Reise: \nKeine", bg="Gold2", font=gui_content.ch_fontsize(16)).grid(row=1,column=1,sticky=W);
+			Button(menu, text="Ort ansteuern", command=partial(place_functions.enterveh, self.gui, {"name":"selfdestruct","steps":100,"events":"all"}), font=gui_content.ch_fontsize(16)).grid(row=2,column=1,sticky=W);
 		
 		Button(hintergrund, text="Weiter gehen", command=hintergrund.quit, font=gui_content.ch_fontsize("16")).place(x=functions.pro_size(50,0), y=functions.pro_size(85,1), anchor=CENTER);
 		hintergrund.mainloop();
