@@ -65,6 +65,7 @@ def enterplace(gui, name):
 	gd = functions.get_gamedata();
 	place = get_place(name);
 	gd["place"] = name;
+	gd["place_hub_timer"]=0;
 	if place["system"]["first"] and place["options"]["events"]["enterf"][0] != "None":
 		gd["places"][name]["system"]["first"] = False;
 		functions.save_gamedata(gd);
@@ -75,24 +76,37 @@ def enterplace(gui, name):
 			gui.game(place["options"]["events"]["entern"][1], place["options"]["events"]["entern"][0], ["place-entern", name]);
 		else:
 			hub(gui);
-def hub(gui):
+def hub(gui, travel=False):
 	gui.clear_screen();
 	back = gui.hintergrund();
 	back.pack();
 	gd = functions.get_gamedata();
+	if travel:
+		print(gd["travel"]["steps"]);
+		if gd["travel"]["steps"] <= 0:
+			print("Destination Reached.");
+			enterplace(gui, gd["travel"]["destination"]);
+		gd["travel"]["steps"]-=1;
+		functions.save_gamedata(gd);
+		event(gui, gd["travel"]["vehicle"]["events"]);
 	place = get_place(gd["place"]);
 	try:
-		exec("print("+gd["place_hub_timer"]+")");
+		exec("print(\""+str(gd["place_hub_timer"])+"\")");
 	except:
+	#	print(sys.exc_info());
 		gd["place_hub_timer"] = 0;
+	print(gd["place_hub_timer"]);
 	if not gd["place_hub_timer"] == 0:
-		if not gd["place_hub_timer"] == (place["options"]["hubtimer"]+1):
+		if not gd["place_hub_timer"] >= (place["options"]["hubtimer"]+1):
 			gd["place_hub_timer"]+=1;
 			functions.save_gamedata(gd);
-			event(gui);
+			event(gui, place["options"]["events"]["random"]);
 		else:
-			gd["place_hub_timer"]=1;
+			print(str(place["options"]["hubtimer"]+1)+"/"+str(gd["place_hub_timer"]));
+			gd["place_hub_timer"]=0;
 			functions.save_gamedata(gd);
+	gd["place_hub_timer"]+=1;
+	functions.save_gamedata(gd);
 	Text = Canvas(back, bg="Gold2", highlightthickness=0);
 	Text.place(x=functions.pro_size(10,0), y=functions.pro_size(10,1));
 	Label(Text, text="Willkommen "+place["word"]+" "+gd["place"], font=gui_content.ch_fontsize(32), bg="Gold2").grid(row=1,columnspan=3,sticky=W);
@@ -114,7 +128,7 @@ def hub(gui):
 			key+=1;	
 	Button(Text, text=gd["place"]+" verlassen", command=partial(leave, gui), bg="red", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,padx=5,pady=5);	
 	if len(place["options"]["events"]["random"]) > 0:
-		Button(Text, text="Weitergehen", command=partial(event, gui), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,column=1,padx=5,pady=5);	
+		Button(Text, text="Weitergehen", command=partial(event, gui, place["options"]["events"]["random"]), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,column=1,padx=5,pady=5);	
 	else:
 		Button(Text, text="Weitergehen", state=DISABLED, command=partial(event, gui), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=15,column=1,padx=5,pady=5);		
 def garage(gui):
@@ -131,7 +145,7 @@ def garage(gui):
 		inventar.place(width=functions.pro_size(90,0), height=functions.pro_size(80,1));
 		
 		inventar_content = get_place(functions.get_gamedata()["place"])["garage"]["storage"];
-		if len(inventar_content.items()) == 0:
+		if len(inventar_content) == 0:
 			Label(inventar.interior, text="Leer", font=gui_content.ch_fontsize("32")).place(x=functions.pro_size(50,0), y=functions.pro_size(50,1), anchor=CENTER);
 		else:
 		
@@ -142,7 +156,7 @@ def garage(gui):
 				newcanvas[xrow] = Canvas(inventar.interior, bg="green", width=functions.pro_size(90,0), height=functions.pro_size(9,1));
 				newcanvas[xrow].grid(row=xrow);
 				Label(newcanvas[xrow], text=value["name"], font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
-				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
+				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, gui, value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
 def storage(gui):
 		gui.clear_screen();
 		hintergrund = gui.hintergrund();
@@ -169,11 +183,34 @@ def storage(gui):
 				newcanvas[xrow].grid(row=xrow);
 				Label(newcanvas[xrow], text=inv, font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
 				Label(newcanvas[xrow], text="Anzahl: "+str(value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
-def enterveh(gui):
-	print("");
-def event(gui):
+def enterveh(gui, vehicle):
+		gui.clear_screen();
+		hintergrund = gui.hintergrund();
+		hintergrund.pack();
+		
+		Label(hintergrund, text="GPS-Einträge", font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
+		Button(hintergrund, text="Zurück", command=partial(hub, gui), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(5,1), x=functions.pro_size(50,0), anchor=N);
+		
+		inventar1 = Canvas(hintergrund, width=functions.pro_size(90,0), height=functions.pro_size(80,1));
+		inventar1.place(anchor=N, x=functions.pro_size(50,0), y=functions.pro_size(10,1));
+		inventar = functions.VerticalScrolledFrame(inventar1);
+		inventar.place(width=functions.pro_size(90,0), height=functions.pro_size(80,1));
+		
+		inventar_content = get_gps();
+		if len(inventar_content) == 0:
+			Label(inventar.interior, text="Leer", fg="black", font=gui_content.ch_fontsize("32")).place(x=functions.pro_size(50,0), y=functions.pro_size(50,1), anchor=CENTER);
+		else:
+		
+			xrow = 0;
+			for value in inventar_content:
+				xrow +=1
+				newcanvas = {};
+				newcanvas[xrow] = Canvas(inventar.interior, bg="green", width=functions.pro_size(90,0), height=functions.pro_size(9,1));
+				newcanvas[xrow].grid(row=xrow);
+				Label(newcanvas[xrow], text=value, font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
+				Button(newcanvas[xrow], text="Reisen ["+str(vehicle["steps"])+"]", command=partial(travel, gui, value, vehicle), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
+def event(gui, events):
 	gd = functions.get_gamedata();
-	events = get_place(gd["place"])["options"]["events"]["random"];
 	event = random.SystemRandom().choice(events);
 	gui.game(event[1], event[0], ["place-random", gd["place"]]);
 def leave(gui):
@@ -185,12 +222,22 @@ def leave(gui):
 		gui.game(place["options"]["events"]["exit"][1], place["options"]["events"]["exit"][0], ["place-exit", name]);
 	else:
 		gui.new_text();
+def travel(gui, place, vehicle):
+	gd = functions.get_gamedata();
+	gd["travel"] = {"steps":vehicle["steps"],"destination":place,"vehicle":vehicle};
+	functions.save_gamedata(gd);
+	hub(gui);
 def clickable(gui, event):
 	gd = functions.get_gamedata();
 	gui.game(event[1], event[0], ["clickable", gd["place"]]);
 def get_places():
 	try:
 		return functions.get_gamedata()["places"];
+	except:
+		return {};
+def get_gps():
+	try:
+		return functions.get_gamedata()["gps"];
 	except:
 		return {};
 def get_place(name):

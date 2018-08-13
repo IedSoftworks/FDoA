@@ -121,7 +121,8 @@ class VerticalScrolledFrame(Frame):
         canvas.bind('<Configure>', _configure_canvas)
 
 def get_gamedata():
-	return json_file_decode("user\gamedata.json");
+	gd = json_file_decode("user\gamedata.json");
+	return gd;
 	
 def save_gamedata(array):
 	json_file_encode("user\gamedata.json", array);

@@ -244,53 +244,66 @@ class GUI():
 
 	def new_text(self, used_text="X"):
 		check=True;
+		gd = functions.get_gamedata();
+		print(gd);
 		try:
-			exec("print("+functions.get_gamedata()["place"]+")");
+			exec("print(\""+gd["place"]+"\")");
 		except:
 			check=False;
-		if check:
-			place_functions.hub(self.gui);
-		alreadyused = functions.json_file_decode("user\\used_texts.json")[self.activemod];
-		if used_text != "X":
-			boo_i = False;
-			for i in alreadyused:
-				if alreadyused[i] == used_text:
-					boo_i = True;
-			if boo_i:
-				game_folder1 = str(inspect.stack()[1][1])
-				game_folder1 = game_folder1.split("\\");
-				game_folder1 = game_folder1[len(game_folder1)-2];
-				req = len(alreadyused[game_folder1])
-				alreadyused[game_folder1][req]=used_text+".py";
-				functions.json_file_encode("user\\used_texts.json", alreadyused);
+		check2=True;
+		gd = functions.get_gamedata();
+		print(gd);
 		try:
-			self.hub_time += 1;
-			print(self.hub_time)
-			if self.hub_time == 3:
-				self.hub_time = 0;
-				self.game("hub", "system");
-		except AttributeError:
-			pass;
-		
-		folders = [f.path for f in os.scandir("events") if f.is_dir() ]
-		folder = [x[7:] for x in folders];
-		random1 = {};
-		file_count =0;
-		for f in folder:
-			if f != "__init__":
-				if f!= "__pycache__":
-					for file in os.scandir("events\\"+f):
-						file = str(file)[11:-2];
-						file_module = file[:-3];
+			exec("print(\""+str(gd["travel"])+"\")");
+		except:
+			check2=False;
+		if check or check2:
+			travel=False;
+			if check2:
+				travel=True;
+			place_functions.hub(self, travel);
+		else:
+			alreadyused = functions.json_file_decode("user\\used_texts.json")[self.activemod];
+			if used_text != "X":
+				boo_i = False;
+				for i in alreadyused:
+					if alreadyused[i] == used_text:
+						boo_i = True;
+				if boo_i:
+					game_folder1 = str(inspect.stack()[1][1])
+					game_folder1 = game_folder1.split("\\");
+					game_folder1 = game_folder1[len(game_folder1)-2];
+					req = len(alreadyused[game_folder1])
+					alreadyused[game_folder1][req]=used_text+".py";
+					functions.json_file_encode("user\\used_texts.json", alreadyused);
+			try:
+				self.hub_time += 1;
+				print(self.hub_time)
+				if self.hub_time == 3:
+					self.hub_time = 0;
+					self.game("hub", "system");
+			except AttributeError:
+				pass;
+			
+			folders = [f.path for f in os.scandir("events") if f.is_dir() ]
+			folder = [x[7:] for x in folders];
+			random1 = {};
+			file_count =0;
+			for f in folder:
+				if f != "__init__":
+					if f!= "__pycache__":
+						for file in os.scandir("events\\"+f):
+							file = str(file)[11:-2];
+							file_module = file[:-3];
 
-						if file_module != "__init__":
-							if file != "__pycache__":
-								if f != "system":
-									random1[str(file_count)]={"folder":f, "file":file_module}
-									file_count += 1;
-		print(random1);
-		hg=random.random() * len(random1);
-		self.game(random1[str(int(hg))]["file"], random1[str(int(hg))]["folder"]);
+							if file_module != "__init__":
+								if file != "__pycache__":
+									if f != "system":
+										random1[str(file_count)]={"folder":f, "file":file_module}
+										file_count += 1;
+			print(random1);
+			hg=random.random() * len(random1);
+			self.game(random1[str(int(hg))]["file"], random1[str(int(hg))]["folder"]);
 		
 
 	#Valueable Functions
