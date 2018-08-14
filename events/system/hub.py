@@ -1,6 +1,7 @@
 from data import event_functions
 from data import functions
 from data import gui_content
+from data import factions
 from tkinter import *;
 from functools import partial;
 from data import place_functions;
@@ -28,6 +29,7 @@ class init():
 		else:
 			Label(menu, text="Aktuelle Reise: \nKeine", bg="Gold2", font=gui_content.ch_fontsize(16)).grid(row=1,column=1,sticky=W);
 			Button(menu, text="Ort ansteuern", command=partial(place_functions.enterveh, self.gui, {"name":"selfdestruct","steps":100,"events":"all"}), font=gui_content.ch_fontsize(16)).grid(row=2,column=1,sticky=W);
+		Button(menu, text="Fraktions-Übersicht", command=partial(factions.overview, self.gui), font=gui_content.ch_fontsize(16)).grid(row=1,column=2,sticky=W);
 		
 		Button(hintergrund, text="Weiter gehen", command=hintergrund.quit, font=gui_content.ch_fontsize("16")).place(x=functions.pro_size(50,0), y=functions.pro_size(85,1), anchor=CENTER);
 		hintergrund.mainloop();
