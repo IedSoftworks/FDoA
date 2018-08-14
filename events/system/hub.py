@@ -34,8 +34,8 @@ class init():
 			Label(menu, text="Aktuelle Reise: \nZiel: "+gd["travel"]["destination"]+"\nAnkunft in: "+str(gd["travel"]["steps"]), bg="Gold2", font=gui_content.ch_fontsize(16)).grid(row=1,column=1,sticky=W);
 		else:
 			Label(menu, text="Aktuelle Reise: \nKeine", bg="Gold2", font=gui_content.ch_fontsize(16)).grid(row=1,column=1,sticky=W);
-			Button(menu, text="Ort ansteuern", command=partial(place_functions.enterveh, self.gui, {"name":"selfdestruct","steps":100,"events":"all"}), font=gui_content.ch_fontsize(16)).grid(row=2,column=1,sticky=W);
-		Button(menu, text="Fraktions-Übersicht", command=partial(factions.overview, self.gui), font=gui_content.ch_fontsize(16)).grid(row=1,column=2,sticky=W);
+			Button(menu, text="Ort ansteuern", command=self.travel, font=gui_content.ch_fontsize(16)).grid(row=2,column=1,sticky=W);
+		Button(menu, text="Fraktions-Übersicht", command=self.factions, font=gui_content.ch_fontsize(16)).grid(row=1,column=2,sticky=W);
 		
 		Button(self.hintergrund, text="Weiter gehen", command=self.hintergrund.quit, font=gui_content.ch_fontsize("16")).place(x=functions.pro_size(50,0), y=functions.pro_size(85,1), anchor=CENTER);
 	
@@ -64,5 +64,7 @@ class init():
 				getattr(self, "inv_canvas"+str(xrow)).grid(row=xrow);
 				Label(getattr(self, "inv_canvas"+str(xrow)), text=inv, font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
 				Label(getattr(self, "inv_canvas"+str(xrow)), text="Anzahl: "+str(value), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
-			
-			
+	def travel(self):
+		place_functions.enterveh(self.gui, {"name":"selfdestruct","steps":100,"events":"all"}, self, -1);
+	def factions(self):
+		factions.overview(self.gui, self);
