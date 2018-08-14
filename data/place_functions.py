@@ -128,6 +128,7 @@ def enterplace(gui, name, takeveh=False, endjourney=False, force=False):
 	else:
 		gui.new_text();
 def hub(gui, travel=False, returned=False):
+	gui.alreadyruns = True;
 	gui.clear_screen();
 	back = gui.hintergrund();
 	back.pack();
