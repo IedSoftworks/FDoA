@@ -8,6 +8,7 @@ from tkinter import *;
 from tkinter import font;
 import math;
 from functools import partial
+import types
 
 def register(data, override=False):
 	placejson = get_places();
@@ -215,7 +216,7 @@ def savetogps(gui, place, remkey=-1):
 			functions.save_gamedata(gd);
 		else:
 			print("full");
-			enterveh(gui, place, -2);
+			enterveh(gui, place, True, -2);
 	hub(gui);
 def garage(gui):
 		gui.clear_screen();
@@ -242,20 +243,30 @@ def garage(gui):
 				newcanvas[xrow] = Canvas(inventar.interior, bg="green", width=functions.pro_size(90,0), height=functions.pro_size(9,1));
 				newcanvas[xrow].grid(row=xrow);
 				Label(newcanvas[xrow], text=value["name"], font=gui_content.ch_fontsize("40"), bg="green", fg="white").place(x=functions.pro_size(1,0), y=functions.pro_size(4.5,1), anchor=W);
-				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, gui, value, (xrow-1)), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
+				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, gui, value, True, (xrow-1)), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
 def storage(gui):
 	container.openxx(get_place(functions.get_gamedata()["place"])["system"]["container"], gui); 
-def enterveh(gui, vehicle, key=-1):
-		gui.clear_screen();
-		hintergrund = gui.hintergrund();
-		hintergrund.pack();
+def enterveh(gui, vehicle, self, key=-1):
+		if isinstance(self, bool):
+			gui.clear_screen();
+			hintergrund = gui.hintergrund();
+			hintergrund.pack();
+			ishub=False;
+		else:
+			print("Baum");
+			self.clear_screen1();
+			hintergrund = self.hintergrund;
+			ishub=True;
+		gui.placeback = self;
 		
 		if key == -2:
 			Label(hintergrund, text="Dein GPS ist voll. Bitte wähle einen Eintrag, den du ersetzen möchtest.", font=gui_content.ch_fontsize("24"), bg="red"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
 		else:	
 			Label(hintergrund, text="GPS-Einträge", font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
-		Button(hintergrund, text="Abbrechen", command=partial(hub, gui, False, True), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
-		
+		if ishub:
+			Button(hintergrund, text="Abbrechen", command=self.hub_menu, font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
+		else:			
+			Button(hintergrund, text="Abbrechen", command=partial(hub, gui, False, True), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
 		inventar1 = Canvas(hintergrund, width=functions.pro_size(90,0), height=functions.pro_size(80,1));
 		inventar1.place(anchor=N, x=functions.pro_size(50,0), y=functions.pro_size(10,1));
 		inventar = functions.VerticalScrolledFrame(inventar1);

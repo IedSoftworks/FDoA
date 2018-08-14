@@ -30,9 +30,8 @@ def get_factions():
 	except:
 		return {};
 def overview(gui, self):
-	gui.clear_screen();
-	back = gui.hintergrund();
-	back.pack();
+	self.clear_screen1();
+	back = self.hintergrund;
 	gd = functions.get_gamedata();
 	fac = get_factions();
 	Text = Canvas(back, bg="Gold2", highlightthickness=0);
