@@ -20,6 +20,10 @@ def register(data):
 	except:
 		data["name"]="Container";
 	try:
+		exec("print(\""+str(data["size"])+"\")");
+	except KeyError:
+		data["size"]=1000000000;
+	try:
 		exec("print(\""+str(data["removeonexit"])+"\")");
 	except:
 		data["removeonexit"]=False;
@@ -121,7 +125,8 @@ def get_cons():
 	except:
 		return {};
 def move(event, id, func, direction, item, amount, gui):
-	con = get_cons()[id]["inv"];
+	conf = get_cons()[id];
+	con = conf["inv"];
 	inv = functions.get_inventory();
 	mistake=False;
 	if direction == 1:
@@ -139,6 +144,13 @@ def move(event, id, func, direction, item, amount, gui):
 			exec("print(\""+str(inv[item])+"\")")
 		except KeyError:
 			inv[item]=0;
+		if direction == 1:
+			famount = 0;
+			for item, amo in con.items():
+				famount += amo;
+			if (conf["size"] - famount - amount) < 0:
+				amount += (conf["size"] - famount - amount);
+			print("Checked. famount:"+str(famount));
 		con[item]+=amount*direction;
 		inv[item]+=amount*direction*-1;
 		gd = functions.get_gamedata();

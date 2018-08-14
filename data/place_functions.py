@@ -54,7 +54,7 @@ def register(data, override=False):
 	except:										#
 		check = False;							#
 	if not check:									#	
-		place["storage"] = {"storage":{},"size":16,"disable":False};#
+		place["storage"] = {"storage":{},"size":8,"disable":False};#
 	else:											#
 		place["storage"] = data["storage"];		#
 	# --#										#
@@ -69,7 +69,7 @@ def register(data, override=False):
 		place["description"] = data["description"];	#
 	# --#										#
 	
-	con = container.register({"inv":place["storage"]["storage"],"name":"Lager von "+data["name"]});
+	con = container.register({"inv":place["storage"]["storage"],"name":"Lager von "+data["name"],"size":place["storage"]["size"]});
 	place["system"] = {"first":True,"container":con};
 	check=False;
 	try:
