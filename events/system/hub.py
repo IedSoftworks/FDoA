@@ -13,9 +13,9 @@ class init():
 	def hub_menu(self):
 		gd = functions.get_gamedata();
 		self.gui.clear_screen();
-		hintergrund = self.gui.hintergrund();
-		hintergrund.pack();
-		menu = Canvas(hintergrund, bg="gold2", highlightthickness=0);
+		self.hintergrund = self.gui.hintergrund();
+		self.hintergrund.pack();
+		menu = Canvas(self.hintergrund, bg="gold2", highlightthickness=0);
 		menu.place(x=functions.pro_size(5,0), y=functions.pro_size(5,1));
 		Button(menu, text="Inventar", command=self.inventory, width=functions.pro_size(1,0), font=gui_content.ch_fontsize(16)).grid(row=1);
 		check=True;
@@ -29,10 +29,11 @@ class init():
 			Label(menu, text="Aktuelle Reise: \nKeine", bg="Gold2", font=gui_content.ch_fontsize(16)).grid(row=1,column=1,sticky=W);
 			Button(menu, text="Ort ansteuern", command=partial(place_functions.enterveh, self.gui, {"name":"selfdestruct","steps":100,"events":"all"}), font=gui_content.ch_fontsize(16)).grid(row=2,column=1,sticky=W);
 		
-		Button(hintergrund, text="Weiter gehen", command=hintergrund.quit, font=gui_content.ch_fontsize("16")).place(x=functions.pro_size(50,0), y=functions.pro_size(85,1), anchor=CENTER);
-		hintergrund.mainloop();
+		Button(self.hintergrund, text="Weiter gehen", command=self.hintergrund.quit, font=gui_content.ch_fontsize("16")).place(x=functions.pro_size(50,0), y=functions.pro_size(85,1), anchor=CENTER);
+		self.hintergrund.mainloop();
 	
 	def inventory(self):
+		self.hintergrund.quit();
 		self.gui.clear_screen();
 		hintergrund = self.gui.hintergrund();
 		hintergrund.pack();

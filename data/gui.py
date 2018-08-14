@@ -21,6 +21,7 @@ class GUI():
 		self.state = True
 		self.root.attributes("-fullscreen", True);
 		self.root.bind("<F11>", self.toggle_fullscreen);
+		self.root.bind("<F4>", self.ending_game);
 
 	def system_start(self, mod):
 		self.activemod = mod;
@@ -316,7 +317,7 @@ class GUI():
 		
 
 	#Valueable Functions
-	def ending_game(self):
+	def ending_game(self, event=None):
 		self.root.quit();
 		quit();
 
