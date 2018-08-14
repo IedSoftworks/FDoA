@@ -120,6 +120,7 @@ def trade(classi, gui, trading):
 		Label(getattr(selfi, "trader_canvas"+str(xrow)), text=value+" Geld", bg="green", fg="white").place(x=functions.pro_size(39.5,0), y=functions.pro_size(9.5,1), anchor=S)
 		Button(getattr(selfi, "trader_canvas"+str(xrow)), text="Kaufen?", command=partial(buy, item, value)).place(x=functions.pro_size(79,0), y=functions.pro_size(5,1), anchor=E);
 def textbox(classi, text, button):
+	classi.gui.alreadyruns = True;
 	classi.gui.clear_screen();
 	hintergrund1 = classi.gui.hintergrund();
 
@@ -152,6 +153,7 @@ def fight_screen(classi, content):
 
 	self = selfi();
 	self.gui = classi.gui;
+	self.gui.alreadyruns = True;
 	self.gui.clear_screen();
 	self.classi = classi;
 	hintergrund1 = self.gui.hintergrund();

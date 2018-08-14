@@ -261,15 +261,18 @@ class GUI():
 		if check:
 			place_functions.hub(self);
 		else:
-			try:
-				self.hub_time += 1;
-				print("HUB: "+str(self.hub_time))
-				if self.hub_time == 3:
-					self.hub_time = 0;
-					self.game("hub", "system");
-			except AttributeError:
-				setattr(self, "hub_time", 0);
-				pass;
+			if self.alreadyruns:
+				try:
+					if self.alreadyruns:
+						self.hub_time += 1;
+						if self.hub_time == 3:
+							self.hub_time = 0;
+							self.game("hub", "system");
+				except AttributeError:
+					setattr(self, "hub_time", 0);
+					pass;
+				self.alreadyruns = False;
+			print("HUB: "+str(self.hub_time))
 			try:
 				if check2 and not gd["travel"]["vehicle"]["events"]=="all":
 					place_functions.hub(self, True);
