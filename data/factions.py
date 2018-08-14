@@ -29,7 +29,7 @@ def get_factions():
 		return functions.get_gamedata()["factions"];
 	except:
 		return {};
-def overview(gui):
+def overview(gui, self):
 	gui.clear_screen();
 	back = gui.hintergrund();
 	back.pack();
@@ -38,7 +38,7 @@ def overview(gui):
 	Text = Canvas(back, bg="Gold2", highlightthickness=0);
 	Text.place(x=functions.pro_size(10,0), y=functions.pro_size(10,1));
 	Label(Text, text="Fraktions-Übersicht", font=gui_content.ch_fontsize(32), bg="Gold2").grid(row=0,sticky=W);
-	Button(Text, text="Zurück", command=partial(gui.game, "hub", "system"), font=gui_content.ch_fontsize(26), bg="Gold2").grid(row=1,sticky=W);
+	Button(Text, text="Zurück", command=self.hub_menu, font=gui_content.ch_fontsize(26), bg="Gold2").grid(row=1,sticky=W);
 	Label(Text, text="Fraktions-Übersicht", font=gui_content.ch_fontsize(32), bg="Gold2", fg="Gold2").grid(row=0,column=1,sticky=W);
 	keywords = {-100:["Tötung auf Sicht","red4","white"],-90:["Extrem Aggressiv","red2","white"],-66:["Extrem Misstrauisch","firebrick2","black"],-33:["Misstrauisch","IndianRed1","black"],-3:["Neutral","beige","black"],3:["Akzeptiert","PaleGreen1","black"],33:["Vertraut","green2","black"],66:["Extrem Vertraut","green4","white"],90:["Blind Vertraut","dark green","white"]};
 	row = 1
