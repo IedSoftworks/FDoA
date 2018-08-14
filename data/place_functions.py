@@ -195,7 +195,8 @@ def hub(gui, travel=False, returned=False):
 		if len(place["options"]["events"]["random"]) > 0:
 			Button(Text, text="Weitergehen", command=partial(event, gui, place["options"]["events"]["random"]), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=16,column=1,padx=5,pady=5);	
 		else:
-			Button(Text, text="Weitergehen", state=DISABLED, command=partial(event, gui), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=16,column=1,padx=5,pady=5);		
+			Button(Text, text="Weitergehen", state=DISABLED, command=partial(event, gui), bg="green", font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=16,column=1,padx=5,pady=5);
+	#	Button(Text, text="HUB", command=partial(mainhub, gui), font=gui_content.ch_fontsize("16"), width=functions.pro_size(1,0)).grid(row=2,column=2,padx=5,pady=5);		
 def savetogps(gui, place, remkey=-1):
 	gd = functions.get_gamedata();
 	try:
@@ -350,3 +351,6 @@ def get_place(name):
 	return get_places()[name];
 def save_places(array):
 	functions.add_json_string("user\gamedata.json", "places", array);
+def mainhub(gui):
+	gui.hubstorage.__init__(gui)
+	gui.hubstorage.hub_menu(gui.hubstorage)

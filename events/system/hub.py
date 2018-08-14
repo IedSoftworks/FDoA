@@ -7,7 +7,8 @@ from functools import partial;
 from data import place_functions;
 
 class init():
-	def __init__(self, gui):
+	def __init__(self, gui, arg=[]):
+		gui.hubstorage = self;
 		self.gui = gui;
 		self.hintergrund = self.gui.hintergrund();
 		self.hintergrund.pack();

@@ -58,16 +58,18 @@ def get_value(name):
 	except:
 		return 0;
 def p(name, value=1):
-	value(name, value);
+	svalue(name, value);
 def n(name, value=1):
-	value(name, value*-1);
-def value(name, value):
+	svalue(name, value*-1);
+def svalue(name, value):
 	value *= 1.5;
 	facs = get_factions();
 	fac = facs[name];
-	divide = fac["value"] / 10;
+	divide = fac["value"] 
 	if divide == 0:
 		divide = 1;
+	value = value * (divide/2)
+	divide = divide / 8;
 	value = value / divide;
 	fac["value"]+=value;
 	gd = functions.get_gamedata();
