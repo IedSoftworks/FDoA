@@ -9,13 +9,19 @@ from data import place_functions;
 class init():
 	def __init__(self, gui):
 		self.gui = gui;
-		self.hub_menu();
-		
-	def hub_menu(self):
-		gd = functions.get_gamedata();
-		self.gui.clear_screen();
 		self.hintergrund = self.gui.hintergrund();
 		self.hintergrund.pack();
+		self.hintergrund.after(0, self.hub_menu);
+		self.hintergrund.mainloop();
+	
+	def clear_screen1(self):
+		self.hintergrund.forget();
+		self.hintergrund = self.gui.hintergrund();
+		self.hintergrund.pack();
+	
+	def hub_menu(self):
+		gd = functions.get_gamedata();
+		self.clear_screen1();
 		menu = Canvas(self.hintergrund, bg="gold2", highlightthickness=0);
 		menu.place(x=functions.pro_size(5,0), y=functions.pro_size(5,1));
 		Button(menu, text="Inventar", command=self.inventory, width=functions.pro_size(1,0), font=gui_content.ch_fontsize(16)).grid(row=1);
@@ -32,7 +38,6 @@ class init():
 		Button(menu, text="Fraktions-Übersicht", command=partial(factions.overview, self.gui), font=gui_content.ch_fontsize(16)).grid(row=1,column=2,sticky=W);
 		
 		Button(self.hintergrund, text="Weiter gehen", command=self.hintergrund.quit, font=gui_content.ch_fontsize("16")).place(x=functions.pro_size(50,0), y=functions.pro_size(85,1), anchor=CENTER);
-		self.hintergrund.mainloop();
 	
 	def inventory(self):
 		self.hintergrund.quit();
