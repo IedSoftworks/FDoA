@@ -35,7 +35,7 @@ def open(event, id, func, gui):
 	hintergrund = gui.hintergrund();
 	hintergrund.pack();
 	cons = get_cons();
-	print(cons);
+#	print(cons);
 	container = cons[id];
 
 	Label(hintergrund, text=container["name"], font=gui_content.ch_fontsize("24"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);		
@@ -150,7 +150,7 @@ def move(event, id, func, direction, item, amount, gui):
 				famount += amo;
 			if (conf["size"] - famount - amount) < 0:
 				amount += (conf["size"] - famount - amount);
-			print("Checked. famount:"+str(famount));
+		#	print("Checked. famount:"+str(famount));
 		con[item]+=amount*direction;
 		inv[item]+=amount*direction*-1;
 		gd = functions.get_gamedata();
