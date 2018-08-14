@@ -246,14 +246,14 @@ class GUI():
 	def new_text(self, used_text="X"):
 		check=True;
 		gd = functions.get_gamedata();
-		print(gd);
+	#	print(gd);
 		try:
 			exec("print(\""+gd["place"]+"\")");
 		except:
 			check=False;
 		check2=True;
 		gd = functions.get_gamedata();
-		print(gd);
+	#	print(gd);
 		try:
 			exec("print(\""+str(gd["travel"])+"\")");
 		except:
@@ -263,7 +263,7 @@ class GUI():
 		else:
 			try:
 				self.hub_time += 1;
-				print(self.hub_time)
+				print("HUB: "+str(self.hub_time))
 				if self.hub_time == 3:
 					self.hub_time = 0;
 					self.game("hub", "system");
