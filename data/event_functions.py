@@ -31,7 +31,10 @@ def caracter_manager(gui, car, mode, arg="none"):
 		functions.save_gamedata(gamedata);
 	elif mode == "get_car_data":
 		persons = functions.get_persons_content();
-		return persons[car];
+		return persons[car.fight_caracter];
+	elif mode == "get_car_data_tmp":
+		persons = car.content["tmpfriends"];
+		return persons[car.fight_caracter];
 	elif mode == "givedisc":
 		json = functions.json_file_decode("user\\found_description.json");
 		json.append(car);
@@ -186,7 +189,18 @@ def fight_screen(classi, content):
 		getattr(self, "alli"+str(rowx)+"name").grid(column=2, row = rowx);
 		setattr(self, "alli"+str(rowx)+"hp", Label(allis, bg="yellow", text="HP: "+str(content["hp"]), font=gui_content.ch_fontsize("14")));
 		getattr(self, "alli"+str(rowx)+"hp").grid(column=3, row = rowx);
-		self.fight["alli"][str(rowx)]={"hp":content["hp"], "name":caracter};
+		self.fight["alli"][str(rowx)]={"hp":content["hp"], "name":caracter, "tmp":False};
+	if "tmpfriends" in self.content:
+		for caracter, content in self.content["tmpfriends"].items():
+			rowx +=1;
+			setattr(self, "alli"+str(rowx)+"selectedc", Canvas(allis, width=20, height=20, bg="yellow", highlightthickness=0));
+			setattr(self, "alli"+str(rowx)+"selectedcircle", getattr(self, "alli"+str(rowx)+"selectedc").create_oval(1, 1, 20, 20, fill="red", outline="yellow"));
+			getattr(self, "alli"+str(rowx)+"selectedc").grid(column=1, row = rowx);
+			setattr(self, "alli"+str(rowx)+"name", Label(allis, bg="yellow", text=caracter, font=gui_content.ch_fontsize("14")))
+			getattr(self, "alli"+str(rowx)+"name").grid(column=2, row = rowx);
+			setattr(self, "alli"+str(rowx)+"hp", Label(allis, bg="yellow", text="HP: "+str(content["hp"]), font=gui_content.ch_fontsize("14")));
+			getattr(self, "alli"+str(rowx)+"hp").grid(column=3, row = rowx);
+			self.fight["alli"][str(rowx)]={"hp":content["hp"], "name":caracter, "tmp":True};
 
 	Label(self.main_screen, text="Enemys", font=gui_content.ch_fontsize("20"),bg="yellow").place(x=450, y=10);
 	self.enemyscreen = Canvas(self.main_screen, bd=0, bg="yellow",width=400, height=500, highlightthickness=0)
@@ -292,7 +306,10 @@ def fight_screen(classi, content):
 		attacklist.place(y=functions.pro_size(1.5,1), x=functions.pro_size(37,0), width=functions.pro_size(60,0), height=functions.pro_size(18,1));
 
 		rowg = 0;
-		for attacks, dmg in caracter_manager(self.gui, self.fight_caracter, "get_car_data")["attacks"].items():
+		mode = "get_car_data";
+		if self.fight_caracter_data["tmp"]:
+			mode = "get_car_data_tmp";
+		for attacks, dmg in caracter_manager(self.gui, self, mode)["attacks"].items():
 			rowg += 1;
 			Button(attacklist, relief=FLAT, bg="white",text=" - "+attacks, command=partial(attack, self, attacks, dmg), font=gui_content.ch_fontsize("15")).grid(row=rowg, sticky=W);
 
@@ -323,7 +340,8 @@ def fight_screen(classi, content):
 		self.commands.place(y=functions.pro_size(80,1));
 
 		def selectcaracter(caracter, id, self):
-			self.fight_caracter = caracter;
+			self.fight_caracter = caracter["name"];
+			self.fight_caracter_data = caracter;
 			self.fight_caracter_id = id;
 			for carid in range(len(self.fight["alli"])):
 				carid += 1;
@@ -340,7 +358,7 @@ def fight_screen(classi, content):
 				if columnx == 3:
 					rowx +=1;
 					columnx=1;
-				Button(caracters, text=value["name"], width=functions.pro_size(3, 0), height=functions.pro_size(0.5,1), command=partial(selectcaracter, value["name"], key, self)).grid(column=columnx, row=rowx);
+				Button(caracters, text=value["name"], width=functions.pro_size(3, 0), height=functions.pro_size(0.5,1), command=partial(selectcaracter, value, key, self)).grid(column=columnx, row=rowx);
 
 			caracters.place(x=functions.pro_size(50,0),y=functions.pro_size(10,1), anchor=CENTER);
 
