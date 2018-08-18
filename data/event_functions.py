@@ -119,7 +119,7 @@ def trade(classi, gui, trading):
 		buyer1 = Frame(buyer);
 		buyer1.place(x=0, y=0);
 		Label(buyer1, text="Du kaufst ").grid(column=1, row=1)
-		entry = functions.NumericEntry(buyer1);
+		entry = functions.NumericEntry(buyer1, True);
 		entry.frame.grid(column=2, row=1);
 
 

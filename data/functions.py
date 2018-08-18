@@ -122,7 +122,7 @@ class VerticalScrolledFrame(Frame):
         canvas.bind('<Configure>', _configure_canvas)
 
 class NumericEntry():
-	def __init__(self, root):
+	def __init__(self, root, negative = False):
 		self.root = root;
 		self.frame = Frame(self.root);
 
@@ -130,22 +130,54 @@ class NumericEntry():
 		entry_var = StringVar();
 
 		def check_99(*args):
-			if int(entry_var.get()) > 99:
-				self.result.set(99);
-				entry_var.set("99");
-			else:
-				self.result.set(int(entry_var.get()));
+			try:
+				if int(entry_var.get()) > 99:
+					self.result.set(99);
+					entry_var.set("99");
+				elif int(entry_var.get()) < 0 and not negative:
+					self.result.set(0);
+					entry_var.set("0");
+				elif int(entry_var.get()) < -99 and negative:
+					self.result.set(-99);
+					entry_var.set("-99");
+				else:
+					self.result.set(int(entry_var.get()));
+			except ValueError:
+				pass;
 
 		entry_var.trace("w", check_99);
 
-		entry = Entry(self.frame, textvariable=entry_var, font=gui_content.ch_fontsize("16"), width=2, );
+		if not negative:
+			entry = Entry(self.frame, textvariable=entry_var, font=gui_content.ch_fontsize("16"), width=2, );
+		else:
+			entry = Entry(self.frame, textvariable=entry_var, font=gui_content.ch_fontsize("16"), width=3, );
 		entry.grid(column=1, row=1);
 
 		def add():
-			entry_var.set(int(self.result.get())+1);
+			try:
+				if float(entry_var.get()) >= 99:
+					entry_var.set("99");
+					self.result.set(99);
+				else:
+					entry_var.set(str(int(self.result.get())+1));
+			except ValueError:
+				entry_var.set("1");
 
 		def rev():
-			entry_var.set(int(self.result.get())-1);
+			try:
+				if int(entry_var.get()) <= 0 and not negative:
+					entry_var.set("0");
+					self.result.set(0);
+				elif int(entry_var.get()) <= -99 and negative:
+					entry_var.set("-99");
+					self.result.set(-99);
+				else:
+					entry_var.set(str(int(self.result.get())-1));
+			except ValueError:
+				if negative:
+					entry_var.set("-1");
+				else:
+					entry_var.set("0");
 
 		buttonframe = Frame(self.frame);
 		Button(buttonframe, text="+", command=add, width=1, height=1).grid(row=1);
