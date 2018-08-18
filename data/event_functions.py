@@ -109,11 +109,20 @@ def trade(classi, gui, trading):
 	shoppinglist = functions.VerticalScrolledFrame(shoppinglist1);
 	shoppinglist.place(width=functions.pro_size(80,0), height=functions.pro_size(60,1));
 
-	def buy(item, value):
+	def buy(item, value, selfi):
+		coins = functions.get_gamedata()["inventory"]["coins"];
+		value1 = int(int(coins) / int(value));
+
 		buyer = Canvas(hintergrund1, width=functions.pro_size(40,0), height=functions.pro_size(7.5,1))
 		buyer.place(x=functions.pro_size(50,0), anchor=N, y=functions.pro_size(3.75,1));
 		Label(hintergrund1, text=item, font=gui_content.ch_fontsize("16"), bg="gold2").place(x=functions.pro_size(50,0), y=functions.pro_size(1,1), anchor=N);
-		
+		buyer1 = Frame(buyer);
+		buyer1.place(x=0, y=0);
+		Label(buyer1, text="Du kaufst ").grid(column=1, row=1)
+		entry = functions.NumericEntry(buyer1);
+		entry.frame.grid(column=2, row=1);
+
+
 
 	xrow = 0;
 	for item, value in trading.items():
@@ -122,7 +131,7 @@ def trade(classi, gui, trading):
 		getattr(selfi, "trader_canvas"+str(xrow)).grid(row = xrow)
 		Label(getattr(selfi, "trader_canvas"+str(xrow)), text=item, font=gui_content.ch_fontsize("30"), bg="green", fg="white").place(x=functions.pro_size(5,0), y=functions.pro_size(5,1), anchor=W)
 		Label(getattr(selfi, "trader_canvas"+str(xrow)), text=value+" Geld", bg="green", fg="white").place(x=functions.pro_size(39.5,0), y=functions.pro_size(9.5,1), anchor=S)
-		Button(getattr(selfi, "trader_canvas"+str(xrow)), text="Kaufen?", command=partial(buy, item, value)).place(x=functions.pro_size(79,0), y=functions.pro_size(5,1), anchor=E);
+		Button(getattr(selfi, "trader_canvas"+str(xrow)), text="Kaufen?", command=partial(buy, item, value, selfi)).place(x=functions.pro_size(79,0), y=functions.pro_size(5,1), anchor=E);
 def textbox(classi, text, button):
 	classi.gui.alreadyruns = True;
 	classi.gui.clear_screen();

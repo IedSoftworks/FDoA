@@ -3,6 +3,7 @@ import os;
 import ast;
 import json;
 from tkinter import *;
+from data import gui_content;
 
 
 def get_screensize(m):
@@ -22,7 +23,7 @@ def pro_size(pro, pos):
 	screen = screen / 100;
 	screen = screen * pro;
 	return int(screen);
-	
+
 def pause(visual = False):
 	if (visual):
 		pause_tmp = lambda: os.system("pause");
@@ -120,13 +121,44 @@ class VerticalScrolledFrame(Frame):
                 canvas.itemconfigure(interior_id, width=canvas.winfo_width())
         canvas.bind('<Configure>', _configure_canvas)
 
+class NumericEntry():
+	def __init__(self, root):
+		self.root = root;
+		self.frame = Frame(self.root);
+
+		self.result = IntVar();
+		entry_var = StringVar();
+
+		def check_99(*args):
+			if int(entry_var.get()) > 99:
+				self.result.set(99);
+				entry_var.set("99");
+			else:
+				self.result.set(int(entry_var.get()));
+
+		entry_var.trace("w", check_99);
+
+		entry = Entry(self.frame, textvariable=entry_var, font=gui_content.ch_fontsize("16"), width=2, );
+		entry.grid(column=1, row=1);
+
+		def add():
+			entry_var.set(int(self.result.get())+1);
+
+		def rev():
+			entry_var.set(int(self.result.get())-1);
+
+		buttonframe = Frame(self.frame);
+		Button(buttonframe, text="+", command=add, width=1, height=1).grid(row=1);
+		Button(buttonframe, text="-", command=rev, width=1, height=1).grid(row=2);
+		buttonframe.grid(column=2, row=1);
+
 def get_gamedata():
 	gd = json_file_decode("user\gamedata.json");
 	return gd;
-	
+
 def save_gamedata(array):
 	json_file_encode("user\gamedata.json", array);
-	
+
 def get_persons_content():
 	return json_file_decode("content\persons.json");
 
@@ -158,7 +190,7 @@ def get_json_file(file, key = "none", ifs = False):
 				varexist = False;
 			except KeyError:
 				varexist = False;
-		
+
 			if varexist:
 				return True;
 			else:
