@@ -391,3 +391,9 @@ def fight_screen(classi, content):
 			Label(self.main_screen, text="VERLOREN",font=gui_content.ch_fontsize("50")).place(x=50, y=50, anchor=NW);
 
 	select_caracters_menus(self);
+def register_itemaction(self, data):
+	if not hasattr(self.gui, "itemevents"):
+		setattr(self.gui, "itemevents", {});
+	if not data["item"] in self.gui.itemevents:
+		self.gui.itemevents[data["item"]] = {};
+	self.gui.itemevents[data["item"]][data["name"]]=data["event"];
