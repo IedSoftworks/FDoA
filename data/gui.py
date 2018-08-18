@@ -329,7 +329,7 @@ class GUI():
 		self.root.quit();
 		quit();
 
-	#Usefull Functions
+	#Usefull Functions hi
 	def clear_screen(self):
 		self.content_frame.forget();
 		self.content_frame = Frame(self.root);
