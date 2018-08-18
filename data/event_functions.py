@@ -5,6 +5,7 @@ from collections import defaultdict
 from tkinter import *;
 from tkinter import font;
 import random;
+import time;
 
 
 def caracter_manager(gui, car, mode, arg="none"):
@@ -248,13 +249,24 @@ def fight_screen(classi, content):
 		id = random.choice(list(self.fight["enemys"].keys()));
 		attack = random.choice(list(self.fight["enemys"][str(id)]["attacks"].keys()));
 		dmg = str(self.fight["enemys"][str(id)]["attacks"][str(attack)]["dmg"]);
+		if "chance" in self.fight["enemys"][str(id)]["attacks"][str(attack)]:
+			chance=self.fight["enemys"][str(id)]["attacks"][str(attack)]["chance"];
+		else:
+			chance=100;
 		target = random.choice(list(self.fight["alli"].keys()));
 
 		self.banner.config(text="Kampf: "+self.fight["enemys"][id]["name"]+" trifft "+self.fight["alli"][str(target)]["name"]+" mit "+attack+". "+str(dmg)+" Schaden");
-		make_dmg(self, target, {"dmg":int(dmg)}, "alli");
+		make_dmg(self, target, {"dmg":int(dmg), "chance":chance}, "alli");
 
 	def make_dmg(self, id, value, mode):
-		self.fight[mode][str(id)]["hp"] -= value["dmg"];
+		applydmg=True;
+		if "chance" in value:
+			rvalue = int(random.randint(1,100));
+			if rvalue > int(value["chance"]):
+				applydmg=False;
+				self.banner.config(text="Fehlschuss.");
+		if applydmg:
+			self.fight[mode][str(id)]["hp"] -= value["dmg"];
 		car_menu = False;
 		if self.fight[mode][str(id)]["hp"]<= 0:
 			self.fight[mode][str(id)]["hp"] = 0;
@@ -300,11 +312,13 @@ def fight_screen(classi, content):
 			self.commands.place(y=functions.pro_size(80,1));
 			exec("Button(self.commands, text=\"Gewonnen.\", font=gui_content.ch_fontsize(\"16\"), command=self.classi."+self.content["win"]["func"]+").place(y=functions.pro_size(10,1), x=functions.pro_size(50,0), anchor=CENTER)")
 		else:
-			self.banner.config(text="Bitte warten...");
+			def waitmsg():
+				self.banner.config(text="Bitte warten...")
+			self.banner.after(1500, waitmsg);
 			self.commands.forget();
 			self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
 			self.commands.place(y=functions.pro_size(80,1));
-			self.banner.after(3000, ai_start);
+			self.banner.after(4500, ai_start);
 
 	def actions_phase(self):
 		self.commands.forget();
