@@ -129,6 +129,9 @@ class NumericEntry():
 		self.result = IntVar();
 		entry_var = StringVar();
 
+		entry_var.set("0");
+		self.result.set(0);
+
 		def check_99(*args):
 			try:
 				if int(entry_var.get()) > 99:
@@ -155,7 +158,7 @@ class NumericEntry():
 
 		def add():
 			try:
-				if float(entry_var.get()) >= 99:
+				if int(entry_var.get()) >= 99:
 					entry_var.set("99");
 					self.result.set(99);
 				else:
