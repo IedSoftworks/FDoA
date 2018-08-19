@@ -115,14 +115,42 @@ def trade(classi, gui, trading):
 
 		buyer = Canvas(hintergrund1, width=functions.pro_size(40,0), height=functions.pro_size(7.5,1))
 		buyer.place(x=functions.pro_size(50,0), anchor=N, y=functions.pro_size(3.75,1));
-		Label(hintergrund1, text=item, font=gui_content.ch_fontsize("16"), bg="gold2").place(x=functions.pro_size(50,0), y=functions.pro_size(1,1), anchor=N);
+		itembanner = Label(hintergrund1, text=item, font=gui_content.ch_fontsize("16"), bg="gold2")
+		itembanner.place(x=functions.pro_size(50,0), y=functions.pro_size(1,1), anchor=N);
 		buyer1 = Frame(buyer);
 		buyer1.place(x=0, y=0);
 		Label(buyer1, text="Du kaufst ").grid(column=1, row=1)
 		entry = functions.NumericEntry(buyer1);
+
+		def cal_value(*args):
+			if entry.result.get() == 0:
+				buy.config(text="Kaufen (0)");
+			else:
+				value1 = entry.result.get() * int(value);
+				buy.config(text="Kaufen ("+str(value1)+")")
+
+		def buy1():
+			value1 = entry.result.get() * int(value);
+			Label(buyer1, text="Möchtest wirklich das kaufen?").grid(column=3, row=1, columnspan=2);
+
+			def yes():
+				remove_items("coins", value1);
+				add_items({item:entry.result.get()});
+				no();
+
+			def no():
+				buyer.place_forget();
+				buyer.destroy();
+				itembanner.place_forget();
+				itembanner.destroy();
+
+			Button(buyer1, text="Ja", command=yes).grid(column=3, row=2);
+			Button(buyer1, text="Nein", command=no).grid(column=4, row=2);
+
+		buy = Button(buyer1, text="Kaufen ("+value+")", command=buy1);
+		buy.grid(column=1, row=2, columnspan=2);
+		entry.result.trace("w", cal_value);
 		entry.frame.grid(column=2, row=1);
-
-
 
 	xrow = 0;
 	for item, value in trading.items():
