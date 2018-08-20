@@ -341,8 +341,10 @@ class GUI():
 		self.root.attributes("-fullscreen", self.state);
 
 	def hintergrund(self):
-		return Canvas(self.content_frame, bg="Gold2", width=functions.pro_size(100,0), height=functions.pro_size(100,1), highlightthickness=0);
-
+		b = Canvas(self.content_frame, bg="Gold2", width=functions.pro_size(100,0), height=functions.pro_size(100,1), highlightthickness=0);
+		Label(b, text=str(functions.getStackDepth()),bg="Gold2",fg="green").place(x=0,y=0);
+		return b;
+		
 	def update(self):
 		self.clear_screen();
 		hintergrund1 = self.hintergrund();

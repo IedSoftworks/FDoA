@@ -237,3 +237,12 @@ def del_json_value(file, key):
 	file1 = json_file_decode(file);
 	del file1[key];
 	json_file_encode(file, file1);
+
+def getStackDepth():
+	n = 1
+	while True:
+		try:
+			sys._getframe(n)
+		except ValueError:
+			return n - 1
+		n += 1
