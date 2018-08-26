@@ -6,3 +6,4 @@ events/main/__init__.py
 *\*.json
 *\pycache\*
 *.pyc
+*.json
