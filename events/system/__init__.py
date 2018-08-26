@@ -1,1 +1,1 @@
-__all__ = ["hub","startgame"];
+__all__ = ["forcehub","hub","startgame"];
