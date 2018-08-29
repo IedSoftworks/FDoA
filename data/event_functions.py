@@ -194,7 +194,7 @@ def textbox(classi, text, button):
 			x.append("navy");
 
 		exec("Button(buttonbox, text=\""+x[0]+"\", command=classi."+x[1]+", bg=\""+x[2]+"\", width=functions.pro_size(4,0), height=functions.pro_size(0.6,1), font=gui_content.ch_fontsize(\"16\"), fg=\"white\").grid(row=rowx, column=columnx)");
-
+	classi.gui.hook.onScreenReload.fire(hintergrund1);
 def fight_screen(classi, content):
 	class selfi():
 		def __init__(self):

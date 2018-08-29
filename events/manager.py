@@ -36,3 +36,4 @@ def run(gui, folder, game_file, game_arg="none", await_return=False):
 			exec("return "+game_file+".init(gui)");
 		else:
 			exec(game_file+".init(gui)");
+	gui.hook.onScreenReload.fire(gui.content_frame);

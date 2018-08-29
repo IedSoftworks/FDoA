@@ -27,6 +27,7 @@ class GUI():
 	def system_start(self, mod):
 		self.activemod = mod;
 		self.content_frame.after(0, self.main_menu)
+		self.hook.onScreenReload.fire(self.content_frame);
 		self.content_frame.mainloop();
 
 	def debug(self):

@@ -246,3 +246,5 @@ def getStackDepth():
 		except ValueError:
 			return n - 1
 		n += 1
+def addmsg(gui, text, color="Black"):
+	gui.texts.insert(0,[text,color]);
