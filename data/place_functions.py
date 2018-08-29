@@ -78,9 +78,12 @@ def register(data, override=False):
 	except:
 		check=True;
 	if check or override:
+		from data.getgui import gui;
+		gui.hook.onPlaceRegister.fire(place);
 		placejson[data["name"]] = place;
 	save_places(placejson);
 def enterplace(gui, name, takeveh=False, endjourney=False, force=False):
+	gui.hook.onPlaceEnter.fire(name);
 	gd = functions.get_gamedata();
 	place = get_place(name);
 	check=True;
@@ -302,6 +305,7 @@ def event(gui, events):
 	gui.game(event[1], event[0], ["place-"+keyword, gd["place"]]);
 def leave(gui):
 	gd = functions.get_gamedata();
+	gui.hook.onPlaceLeave.fire(gd["place"]);
 	try:
 		place = get_place(gd["place"]);
 		del gd["place"];

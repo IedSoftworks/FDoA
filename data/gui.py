@@ -189,7 +189,7 @@ class GUI():
 				setattr(self, "car"+str(X)+"_background_img", PhotoImage(file="content\pictures\\background_car.gif"))
 				setattr(self, "car"+str(X)+"_img", PhotoImage(file = "content\pictures\\"+value["img"]+".gif"));
 				#img.create_image(image=getattr(self, "car"+str(X)+"_img"), 90, 90)
-				img.create_image(100, 100, image=getattr(self, "car"+str(X)+"_background_img"))
+				#img.create_image(100, 100, image=getattr(self, "car"+str(X)+"_background_img"))
 				Label(yx, text=key, bg="green4", font=gui_content.ch_fontsize("30")).place(x=110, y=10);
 				Label(yx, text="Spezies/Rasse: "+value["species"], font=gui_content.ch_fontsize("16"), bg="green4").place(x=110, y=55);
 				Label(yx, text="Fähigkeiten: "+abil, font=gui_content.ch_fontsize("16"), bg="green4").place(x=110, y=80);
@@ -232,7 +232,7 @@ class GUI():
 
 	def game(self, game_file, game_folder=False, game_arg="none", await_return = False):
 		self.clear_screen();
-
+		self.hook.onEventInit.fire(game_file, game_folder, game_arg);
 		if not game_folder:
 			game_folder1 = str(inspect.stack()[1][1])
 			game_folder1 = game_folder1.split("\\");
@@ -246,6 +246,7 @@ class GUI():
 			manager.run(self, game_folder, game_file, game_arg, await_return);
 
 	def new_text(self, used_text="X"):
+		self.hook.onEventEnd.fire();
 		check=True;
 		gd = functions.get_gamedata();
 	#	print(gd);
@@ -342,7 +343,7 @@ class GUI():
 
 	def hintergrund(self):
 		b = Canvas(self.content_frame, bg="Gold2", width=functions.pro_size(100,0), height=functions.pro_size(100,1), highlightthickness=0);
-		Label(b, text=str(functions.getStackDepth()),bg="Gold2",fg="green").place(x=0,y=0);
+		self.hook.onScreenReload.fire(b);
 		return b;
 		
 	def update(self):

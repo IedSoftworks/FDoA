@@ -29,6 +29,8 @@ def register(data):
 		data["removeonexit"]=False;
 	gd[id]=data;
 	functions.add_json_string("user\gamedata.json", "containers", gd);
+	from data.getgui import gui;
+	gui.hook.onContainerRegister.fire(id);
 	return id;
 def open(event, id, func, gui):
 	gui.clear_screen();
@@ -37,6 +39,7 @@ def open(event, id, func, gui):
 	cons = get_cons();
 #	print(cons);
 	container = cons[id];
+	gui.hook.onContainerOpen.fire(id, container);
 
 	Label(hintergrund, text=container["name"], font=gui_content.ch_fontsize("24"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);		
 	Button(hintergrund, text="Zurück", command=partial(exit, event, id, func, gui), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(5,1), x=functions.pro_size(50,0), anchor=N);
@@ -128,6 +131,10 @@ def move(event, id, func, direction, item, amount, gui):
 	conf = get_cons()[id];
 	con = conf["inv"];
 	inv = functions.get_inventory();
+	if direction == 1:
+		gui.hook.onContainerMoveToCon.fire(id, conf, inv, item, amount, event, func);
+	if direction == -1:
+		gui.hook.onContainerMoveToInv.fire(id, conf, inv, item, amount, event, func);
 	mistake=False;
 	if direction == 1:
 		if not event_functions.check_item(item) >= amount:

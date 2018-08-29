@@ -12,6 +12,7 @@ from functools import partial
 import hashlib
 
 def register(data, override=False):
+	from data.getgui import gui;
 	factions = get_factions();
 	if not "value" in data:
 		data["value"]=0;
@@ -24,6 +25,7 @@ def register(data, override=False):
 		gd = functions.get_gamedata();
 		gd["factions"]=factions;
 		functions.save_gamedata(gd);
+		gui.hook.onFactionRegister.fire(data);
 def get_factions():
 	try:
 		return functions.get_gamedata()["factions"];
@@ -62,6 +64,7 @@ def p(name, value=1):
 def n(name, value=1):
 	svalue(name, value*-1);
 def svalue(name, value):
+	value2=value;
 	value *= 1.5;
 	facs = get_factions();
 	fac = facs[name];
@@ -75,5 +78,7 @@ def svalue(name, value):
 	gd = functions.get_gamedata();
 	facs[name]=fac;
 	gd["factions"]=facs;
+	from data.getgui import gui;
+	gui.hook.onFactionValue.fire(fac, value2, value);
 	functions.save_gamedata(gd);
 	

@@ -90,8 +90,11 @@ class init():
 				if not event["place"] == functions.get_gamedata()["place"]:
 					notbutton=True;
 			if not notbutton:
-				Button(Text2, text=button, command=partial(self.gui.game, event[1], event[0])).grid(row=y,column=x,padx=5,pady=5);
+				Button(Text2, text=button, command=partial(self.useitem2, item, event[1], event[0])).grid(row=y,column=x,padx=5,pady=5);
 			x+=1;
 			if x == 6:
 				x = 1;
 				y += 1;
+	def useitem2(self, item, event1, event0):
+		self.gui.hook.onItemAction.fire(item, event0, event1);
+		self.gui.game(event1, event0);

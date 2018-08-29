@@ -58,6 +58,7 @@ def randomize(value, if_value = False):
 
 def add_items(items):
 	inv = functions.get_inventory();
+	from data.getgui import gui;
 	for item, amount in items.items():
 		test = True
 		try:
@@ -68,7 +69,7 @@ def add_items(items):
 			test = False;
 		except IndexError:
 			test = False;
-
+		gui.hook.onItemAdd.fire(item, amount);
 		if test:
 			inv[item] += amount;
 		else:
@@ -77,18 +78,22 @@ def add_items(items):
 	functions.save_inventory(inv);
 
 def check_item(item):
+	from data.getgui import gui;
 	inv = functions.get_inventory();
 	try:
 		amount = inv[item];
 	except:
 		amount = 0;
+	gui.hook.onItemCheck.fire(item);
 	return amount;
 
 def remove_items(item, amount):
+	from data.getgui import gui;
 	inv = functions.get_inventory();
 	inv[item] -= amount
 	if inv[item] < 0:
 		inv[item] =0;
+	gui.hook.onItemRemove.fire(item, amount);
 	functions.save_inventory(inv);
 
 # Important functions
@@ -166,6 +171,9 @@ def textbox(classi, text, button):
 	hintergrund1 = classi.gui.hintergrund();
 
 	hintergrund1.pack();
+	
+	classi.gui.hook.onTextbox.fire(text, button);
+	
 	textbox = Canvas(hintergrund1, height=functions.pro_size(40,1), width=functions.pro_size(80,0), bg="Gold2",highlightthickness=0);
 	textbox.place(x=functions.pro_size(10,0), y=functions.pro_size(5,1));
 	Message(textbox, text=text, font=gui_content.ch_fontsize("14"), width=functions.pro_size(78,0), bg="Gold2").place(x=functions.pro_size(2,0));
@@ -203,7 +211,7 @@ def fight_screen(classi, content):
 	self.commands.place(y=functions.pro_size(80,1));
 	self.main_screen = Canvas(hintergrund1, bg="yellow", width=860, height=550);
 	self.main_screen.place(x=20, y=30);
-
+	
 	self.content = content;
 
 	self.fight = {};
@@ -287,6 +295,10 @@ def fight_screen(classi, content):
 		make_dmg(self, target, {"dmg":int(dmg), "chance":chance}, "alli");
 
 	def make_dmg(self, id, value, mode):
+		if mode == "alli":
+			self.gui.hook.onFightAttackAlli.fire(self, value, id);
+		else:
+			self.gui.hook.onFightAttackEnemy.fire(self, value, id);
 		applydmg=True;
 		if "chance" in value:
 			rvalue = int(random.randint(1,100));
@@ -338,6 +350,7 @@ def fight_screen(classi, content):
 			self.commands.forget();
 			self.commands = Canvas(hintergrund1, bg="brown", width=functions.pro_size(100,0), height=functions.pro_size(20,1));
 			self.commands.place(y=functions.pro_size(80,1));
+			self.gui.hook.onFightEnd(self, 0);
 			exec("Button(self.commands, text=\"Gewonnen.\", font=gui_content.ch_fontsize(\"16\"), command=self.classi."+self.content["win"]["func"]+").place(y=functions.pro_size(10,1), x=functions.pro_size(50,0), anchor=CENTER)")
 		else:
 			def waitmsg():
@@ -374,6 +387,7 @@ def fight_screen(classi, content):
 		rand_value = random.random() * 100;
 		print(rand_value);
 		if rand_value < chance:
+			self.gui.hook.onFightEnd(1, self);
 			exec("Button(self.commands, text=\"Erfolgreich.\", font=gui_content.ch_fontsize(\"16\"), command=self.classi."+self.content["runaway"]["func"]+").place(y=functions.pro_size(10,1), x=functions.pro_size(50,0), anchor=CENTER)");
 		else:
 			def ai_start():
@@ -417,7 +431,9 @@ def fight_screen(classi, content):
 
 		else:
 			Label(self.main_screen, text="VERLOREN",font=gui_content.ch_fontsize("50")).place(x=50, y=50, anchor=NW);
-
+			self.gui.hook.onFightEnd(self, 0);
+			
+	self.gui.hook.onFightInit.fire(self);
 	select_caracters_menus(self);
 def register_itemaction(self, data):
 	if not hasattr(self.gui, "itemevents"):
