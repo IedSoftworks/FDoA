@@ -33,7 +33,7 @@ gui1.hook.addevent("onScreenReload"); # Background-Canvas
 gui1.hook.addevent("onTextbox"); # Text, Buttons
 
 gui1.hook.addevent("onEventInit"); # Dir, Event, Args
-gui1.hook.addevent("onEventEnd"); #
+gui1.hook.addevent("onEventEnd"); # Dir, Event
 
 gui1.hook.addevent("onFightInit"); # Fight Object
 gui1.hook.addevent("onFightEnd"); # Fight Object, Outcome: 0 - Won; 1 - Escaped; 2 - Lost

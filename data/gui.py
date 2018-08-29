@@ -233,6 +233,7 @@ class GUI():
 	def game(self, game_file, game_folder=False, game_arg="none", await_return = False):
 		self.clear_screen();
 		self.hook.onEventInit.fire(game_file, game_folder, game_arg);
+		self.last_event = [game_folder,game_file];
 		if not game_folder:
 			game_folder1 = str(inspect.stack()[1][1])
 			game_folder1 = game_folder1.split("\\");
@@ -246,7 +247,7 @@ class GUI():
 			manager.run(self, game_folder, game_file, game_arg, await_return);
 
 	def new_text(self, used_text="X"):
-		self.hook.onEventEnd.fire();
+		self.hook.onEventEnd.fire(*self.last_event);
 		check=True;
 		gd = functions.get_gamedata();
 	#	print(gd);
