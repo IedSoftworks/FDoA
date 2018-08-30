@@ -49,8 +49,14 @@ gui1.hook.addevent("onContainerOpen"); # Container ID, Container Data.
 gui1.hook.addevent("onContainerMoveToCon"); # Container ID, Container Data, Player Inventory, Moved Item, Amount, Return Event, Return Function
 gui1.hook.addevent("onContainerMoveToInv"); # Container ID, Container Data, Player Inventory, Moved Item, Amount, Return Event, Return Function
 
+gui1.hook.addevent("onQuestRegister"); # Quest Data
+gui1.hook.addevent("onQuestAccept"); # Quest Data
+gui1.hook.addevent("onQuestDecline"); # Quest Data
+gui1.hook.addevent("onQuestFinish"); # Quest Data
+gui1.hook.addevent("onQuestCancel"); # Quest Data
+
 gui1.hook.addevent("onFactionRegister"); # Faction Data
-gui1.hook.addevent("onFactionValue"); # Faction Data, Given Value, Calculated Value
+gui1.hook.addevent("onFactionValue"); # Faction Data, Given Value, Calculated Value, Mode (bool)
 
 gui1.hook.addevent("onItemAdd"); # Item, Amount
 gui1.hook.addevent("onItemRemove"); # Item, Amount
