@@ -216,6 +216,7 @@ class GUI():
 				items = {};
 			items["coins"] = 300
 			event_functions.add_items(items);
+			self.hook.onStartGame.fire(self.selected_caracter);
 			self.game("startgame", "system", [self.selected_caracter]);
 
 		selected_caracter_name = Label(hintergrund1, text="Niemand", font=gui_content.ch_fontsize("16"), bg="Gold2");

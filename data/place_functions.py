@@ -251,7 +251,7 @@ def garage(gui):
 				Button(newcanvas[xrow], text="Benutzen", command=partial(enterveh, gui, value, True, (xrow-1)), fg="white",bg="green").place(y=functions.pro_size(9,1), x=functions.pro_size(88,0), anchor=SE);
 def storage(gui):
 	container.openxx(get_place(functions.get_gamedata()["place"])["system"]["container"], gui); 
-def enterveh(gui, vehicle, self, key=-1):
+def enterveh(gui, vehicle, self=True, key=-1, returnfunc=False):
 		if isinstance(self, bool):
 			gui.clear_screen();
 			hintergrund = gui.hintergrund();
@@ -263,15 +263,21 @@ def enterveh(gui, vehicle, self, key=-1):
 			hintergrund = self.hintergrund;
 			ishub=True;
 		gui.placeback = self;
-		
+		if not returnfunc:
+			func=False;
+		else:
+			func=True;
 		if key == -2:
 			Label(hintergrund, text="Dein GPS ist voll. Bitte wähle einen Eintrag, den du ersetzen möchtest.", font=gui_content.ch_fontsize("24"), bg="red"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
 		else:	
 			Label(hintergrund, text="GPS-Einträge", font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(1,1), x=functions.pro_size(50,0), anchor=N);
-		if ishub:
-			Button(hintergrund, text="Abbrechen", command=self.hub_menu, font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
-		else:			
-			Button(hintergrund, text="Abbrechen", command=partial(hub, gui, False, True), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
+		if not func:
+			if ishub:
+				Button(hintergrund, text="Abbrechen", command=self.hub_menu, font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
+			else:			
+				Button(hintergrund, text="Abbrechen", command=partial(hub, gui, False, True), font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);
+		else:
+			Button(hintergrund, text="Abbrechen", command=returnfunc, font=gui_content.ch_fontsize("16"), bg="green"). place(y=functions.pro_size(6,1), x=functions.pro_size(50,0), anchor=N);			
 		inventar1 = Canvas(hintergrund, width=functions.pro_size(90,0), height=functions.pro_size(80,1));
 		inventar1.place(anchor=N, x=functions.pro_size(50,0), y=functions.pro_size(10,1));
 		inventar = functions.VerticalScrolledFrame(inventar1);

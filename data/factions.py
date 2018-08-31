@@ -71,6 +71,11 @@ def get_value(name):
 		return get_factions()[name]["value"];
 	except:
 		return 0;
+def get_value2(name):
+	try:
+		return get_factions()[name]["value2"];
+	except:
+		return 0;
 def p(name, value=1, mode=False):
 	svalue(name, value, mode);
 def n(name, value=1, mode=False):

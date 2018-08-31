@@ -25,9 +25,11 @@ else:
 	mod = "main";
 
 gui1 = gui.GUI();
+getgui.setgui(gui1);
 gui1.hook = pyevent.Hook(gui1);
 # All Events contain the gui object as "gui" arg.
 gui1.hook.addevent("onInit"); #
+gui1.hook.addevent("onStartGame"); # Selected Character
 
 gui1.hook.addevent("onScreenReload"); # Background-Canvas
 gui1.hook.addevent("onTextbox"); # Text, Buttons
@@ -69,5 +71,4 @@ for f in os.scandir("mods"):
 			exec("from mods."+f.name+" import init");
 			exec("init.init(gui1)");
 gui1.hook.onInit.fire();
-getgui.gui(gui1);
 gui1.system_start(mod);
