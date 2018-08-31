@@ -10,6 +10,45 @@ import random
 import inspect
 from data import place_functions;
 
+'''
+UNFINISHED!!!
+class debuging():
+	def __init__(self):
+		self.row = 0;
+		self.rooting_run = False;
+		self.content = {};
+		class content():
+			def __init__(self):
+				self.true = True;
+		self.contents = content();
+	def register(self, name, default_value = 0):
+		self.row += 1
+		if self.rooting_run:
+			Label(self.rooting, text=name+": ").grid(row=self.row, column=1);
+			setattr(self.contents, name, Label(self.rooting, text=default_value));
+			getattr(self.contents, name).grid(row=self.row, column=2);
+		else:
+			self.content[name] = {"value":default_value};
+
+	def change(self, name, value = 0):
+		if hasattr(self.contents, name):
+			getattr(self.contents, name).config(text=value);
+		elif name in self.content:
+			self.content[name]["value"] = value;
+		else:
+			print("DEBUG: Column '"+name+"' dosen't exist! Please register.");
+
+	def run(self):
+		if not self.rooting_run:
+			self.rooting = Tk();
+			self.rooting_run = True;
+			self.rooting.title("FDoA | #DEBUG");
+			for key, value in self.content:
+				Label(self.rooting, text=key+": ").grid(row=self.row, column=1);
+				setattr(self.contents, key, Label(self.rooting, text=value));
+				getattr(self.contents, key).grid(row=self.row, column=2);
+			self.rooting.mainloop();'''
+
 class GUI():
 	#System Start
 	def __init__(self):
@@ -347,7 +386,7 @@ class GUI():
 		b = Canvas(self.content_frame, bg="Gold2", width=functions.pro_size(100,0), height=functions.pro_size(100,1), highlightthickness=0);
 		self.hook.onScreenReload.fire(b);
 		return b;
-		
+
 	def update(self):
 		self.clear_screen();
 		hintergrund1 = self.hintergrund();
