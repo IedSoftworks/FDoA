@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			FDoA Modding Guide
+		</title>
+		<link rel="stylesheet" href="syntax/styles/mono-blue.css">
+		<script src="syntax/highlight.pack.js"></script>
+		<script>hljs.initHighlightingOnLoad();</script>
+	</head>
+	<body>
+		<ol><h1>
+			<li>
+				<a name="Content">Content</h1></a>
+					<ol>
+						<li><a href="#Content">Content</a></li>
+						<li><a href="#getting_started">Getting started</a>
+							<ol>
+								<li><a href="#general">General</a></li>
+								<li><a href="#events">Events</a></li>
+								<li><a href="#registrations">Registrations</a></li>
+								<li><a href="#gui">The GUI-Object</a></li>
+							</ol>
+						</li>
+						<li><a href="#event_functions_textbox">Textbox</a></li>
+						<li><a href="#event_functions_inv">Inventory & Trading</a></li>
+						<li><a href="#event_functions_fights">Fights</a></li>
+					</ol>
+			</li><h1>
+			<li>
+				<a name="getting_started">Getting Started</h1></a>
+					<a name="general"><h2>General</h2></a>
+						<ol>
+							<li>Choose a name for your mod, and create a directory called exactly that in the [/files/mods] directory.</li>
+							<li>Create a file called [init.py] in exactly that directory.</li>
+							<li>Add all kinds of imports you need, but whats important is that you add:<br><pre><code>def init(gui):</code></pre></li>
+							<li>This function will be called on game start, and that for every single mod. Use this function to <a href="#registrations">register</a> everything you need.</li>
+						</ol>
+					<a name="events"><h2>Events</h2></a>
+						<ol>
+							<li>Create an [events] directory within your mod directory.</li>
+							<li>Create a file called whatever you like, containing the event.</li>
+							<li>Add all kinds of imports you need, but whats important is that you add:<br><pre><code>class init():<br>    def __init__(self, gui, arg=[]):<br>        self.gui = gui;</pre></code></li>
+							<li>Start your event by using a <a href="#event_functions_textbox">Textbox</a>, a <a href="#event_functions_fights">Fight</a> or anything else.</li>
+							<li>Add Event-Functions for various purposes.</li>
+							<li>End the event whenever you want by calling <b><a href="#gui">GUI</a></b>.new_text();
+							<pre><code>class init():<br>    def __init__(self, gui, arg=[]):<br>        self.gui=gui;<br>    def hello(self):<br>        self.gui.new_text();</code></pre>
+							</li>
+						</ol>
+					<a name="registrations"><h2>Registrations</h2></a>
+						There are a few things that should be registered at the beginning for the game to know about them. You should do this in the <a href="#general">INIT-Function</a>.
+						These things are:
+						<ul>
+							<li>EventHook-Hooks</li>
+							<li>EventHook-Events</li>
+							<li>Factions</li>
+							<li>Places</li>
+							<li>Itemactions</li>
+						</ul>
+						<pre><code>from data import factions<br>from data import place_functions<br>from data import event_functions<br>from data.getgui import gui<br><br>gui.hook.onTextbox.register(Function);<br>gui.hook.addevent("testevent");<br>factions.register(data);<br>place_functions.register(data);<br>event_functions.register_itemaction(data);</code></pre>
+						Other things that need to be registered, but not necessarily at the beginning, include:
+						<ul>
+							<li>Containers</li>
+							<li>Quests</li>
+						</ul>
+						<pre><code>from data import container<br>from data import quest<br><br>id = container.register(data);<br>quest.register(data);</code></pre>
+					<a name="gui"><h2>The GUI-Object</h2></a>
+						The GUI-Object is an object that is created at the very start of the game and should be available almost everywhere, as it is needed for a lot of stuff.
+						It is, for example, needed for:
+						<ul>
+							<li>EventHooks</li>
+							<li>Decently using Events</li>
+							<li>Displaying stuff</li>
+							<li>Having access to lots of data throughout the entire game</li>
+							<li>... and more.</li>
+						</ul>
+						If you should ever need the GUI-Object in one of your functions and can't figure out how to obtain it, here are a few tips:
+						<ol>
+							<li>At the beginning of every Event, the GUI-Object is passed as second argument. You are required to place it inside your event-object, as a few functions require it to be right there. The Event-Functions are not called with the GUI as an argument, but luckily, you can at this time find it in your self-object.</li>
+							<li>The gui-object is passed to every fired Eventhook as keyed argument "gui".</li>
+							<li>If you should ever find yourself in a situation where you have, for whatever reason, no access to the GUI-Object, just use the following code:<pre><code>from data.getgui import gui</code></pre>After doing that, you will have access to a global variable "gui", containing the gui.
+						</ol>
+			</li><h1>
+			<li>
+				<a name="event_functions_textbox">Textbox</h1></a>
+					<pre><code class="python">from data import event_functions</code></pre>
+					<pre><code class="python">event_functions.textbox(self, "Text", [["Button 1","Function","Color"], ... ]);</code></pre>
+					<ol>
+						<li><b>self</b> should be the event object, passed as an argument.</li>
+						<li><b>Text</b> is the text displayed for the event.</li>
+						<li><b>Button 1</b> is the text on the button. You can technically add as many buttons you want, but a maximum of 4 looks good.</li>
+						<li><b>Function</b> is the function to be executed as a string. Add said function to the event class.<pre><code>    def Function(self):</code></pre></li>
+						<li><b>Color</b> is the color for the button. You can leave this out to get the default color <b>navy</b>.</li>
+					</ol>
+			</li><h1>
+			<li>
+				<a name="event_functions_inv">Inventory & Trading</h1></a>
+					<pre><code class="python">from data import event_functions</code></pre>
+					<ul>
+						<li><b>Inventory Management:</b><ol>
+							<li>Add Items:<pre><code>event_functions.add_items({"Item":amount});<br># You can also add multiple items to this dictionary, they will all be added.</code></pre></li>
+							<li>Remove Items:<pre><code>event_functions.remove_items("Item", amount);</code></pre></li>
+							<li>Check Items:<pre><code>event_functions.check_item("Item");<br># Returns the amount of this item the player currently has.</code></pre></li>
+						</ol>
+						</li>
+						<li><b>Trading:</b><pre><code>event_functions.trade(self, False, {"Item":price,"Item2":price});</code></pre>
+						Opens the Trading menu, containing the trades from the given dictionary. Replace "False" with the GUI-Object if it is not yet added into the self-object.
+						</li>
+					</ul>
+			</li><h1>
+			<li>
+				<a name="event_functions_fights">Fights</h1></a>
+					<pre><code class="python">from data import event_functions</code></pre>
+					<pre><code class="python">event_functions.fight_screen(self, {content});</code></pre>
+					The content-dictionary should look the following way:
+<pre><code class="json">{
+    "enemys": {
+        "Enemy1": {
+            "multi":1,
+            "attacks": {
+                "Machinegun": {
+                    "dmg":50,
+                    "chance":80,
+                }
+            },
+            "hp":64
+        }
+    },
+    "runaway": {
+        "chance":80,
+        "func":"Function"
+    },
+    "win": {
+        "func":"Function"
+    }
+}
+</code></pre>		
+					Most of the arguments in there should be self-explanatory, but there are a few I will explain anyway:<br>
+					<ul>
+						<li>enemys/{Enemy}/multi: Automatically add an identical Enemy multiple times to the fight.</li>
+						<li>enemys/{Enemy}/attacks/{Attack}/chance: The percentage probability of this attack to hit. Defaults to 100.</li>
+						<li>runaway/chance: The percentage probability of an escape to succeed.</li> 
+						<li>runaway/func: Event function to be executed on successful escape, as a string.</li> 
+						<li>win/func: Event function to be executed when winning, as a string.</li> 
+			</li>
+		</ol>

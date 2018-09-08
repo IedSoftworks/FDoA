@@ -104,6 +104,8 @@ def trade(classi, gui, trading):
 			self.boolean = True;
 
 	selfi = init();
+	if not gui:
+		gui = classi.gui;
 	gui.clear_screen();
 	classi.gui = gui;
 	hintergrund1 = gui.hintergrund();
