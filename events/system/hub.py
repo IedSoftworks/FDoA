@@ -97,4 +97,4 @@ class init():
 				y += 1;
 	def useitem2(self, item, event1, event0):
 		self.gui.hook.onItemAction.fire(item, event0, event1);
-		self.gui.game(event1, event0);
+		self.gui.game(event1, event0, ["Itemevent",item]);

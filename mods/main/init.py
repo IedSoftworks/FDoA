@@ -2,6 +2,7 @@ from tkinter import *
 from data import functions;
 from data import factions;
 from data import gui_content;
+from data import event_functions;
 
 def init(gui):
 	gui.hook.onStartGame.register(startGame);
@@ -31,3 +32,4 @@ def faction_value(*args, **keyargs):
 		functions.addmsg(keyargs["gui"], "\/ "+args[0]["name"]+" ("+str(args[2]*-1)+"%)", "red");
 def startGame(*args, **keyargs):
 	factions.register({"name":"KNA","value2":97,"value":10});
+	event_functions.adddoc("KNA-Dokument #1","kna1");
