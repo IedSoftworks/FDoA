@@ -63,7 +63,7 @@ class GUI():
 		self.root.attributes("-fullscreen", True);
 		self.root.bind("<F11>", self.toggle_fullscreen);
 		self.root.bind("<F4>", self.ending_game);
-		self.lang="EN";
+		self.lang="DE";
 		self.translate = Translate();
 
 	def language(gui, string):
