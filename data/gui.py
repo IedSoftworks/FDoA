@@ -5,6 +5,7 @@ from functools import partial;
 from data import functions;
 from data import gui_content;
 from data import event_functions;
+from data.translate import Translate;
 import ctypes
 import random
 import inspect
@@ -62,6 +63,21 @@ class GUI():
 		self.root.attributes("-fullscreen", True);
 		self.root.bind("<F11>", self.toggle_fullscreen);
 		self.root.bind("<F4>", self.ending_game);
+		self.lang="EN";
+		self.translate = Translate();
+
+	def language(gui, string):
+		if not gui.lang=="DE":
+			if not gui.lang in gui.translate:
+				print("Language not found: "+gui.lang);
+				return string;
+			elif not string in gui.translate[gui.lang]:
+				print("Language string not found: "+gui.lang+"-"+string);
+				return string;
+			else:
+				return gui.translate[gui.lang][string];
+		else:
+			return string;
 
 	def system_start(self, mod):
 		self.activemod = mod;
@@ -109,11 +125,11 @@ class GUI():
 		if self.activemod != "main":
 			Label(hintergrund1, text=self.activemod, font=gui_content.ch_fontsize("24")).place(y=125, x=functions.pro_size(50,0), anchor=CENTER);
 
-		Button(hintergrund1, text="Update", bd=8,font=gui_content.ch_fontsize("16"),bg="blue", fg="white", command=self.update).place(anchor=NE, y=functions.pro_size(1,1), x=functions.pro_size(99,0));
-		Button(hintergrund1, text="Start", font=gui_content.ch_fontsize("20"),bg="green", fg="white", bd=8,command=self.caracter_choose).place(anchor=CENTER, y=functions.pro_size(20,1), x=functions.pro_size(50,0), width=functions.pro_size(25, 0), height=functions.pro_size(10, 1));
-		Button(hintergrund1, text="Mods", font=gui_content.ch_fontsize("20"),bg="red", fg="white", bd=8,command=self.modmanager).place(anchor=CENTER, y=functions.pro_size(35,1), x=functions.pro_size(50,0), width=functions.pro_size(25, 0), height=functions.pro_size(10, 1));
-		Button(hintergrund1, text="Beenden", font=gui_content.ch_fontsize("20"),bg="blue", fg="white", bd=8,command=self.ending_game).place(anchor=CENTER, y=functions.pro_size(50,1), x=functions.pro_size(50,0), width=functions.pro_size(25, 0), height=functions.pro_size(10, 1));
-		Label(hintergrund1, text="Beta-Testers:\n\n"+functions.read_file_content("data\BetaTester.txt"), bg="gold2", font=gui_content.ch_fontsize("16")).place(y=functions.pro_size(100,1), x=functions.pro_size(0,1), anchor=SW);
+		Button(hintergrund1, text=self.language("Update"), bd=8,font=gui_content.ch_fontsize("16"),bg="blue", fg="white", command=self.update).place(anchor=NE, y=functions.pro_size(1,1), x=functions.pro_size(99,0));
+		Button(hintergrund1, text=self.language("Start"), font=gui_content.ch_fontsize("20"),bg="green", fg="white", bd=8,command=self.caracter_choose).place(anchor=CENTER, y=functions.pro_size(20,1), x=functions.pro_size(50,0), width=functions.pro_size(25, 0), height=functions.pro_size(10, 1));
+		Button(hintergrund1, text=self.language("Mods"), font=gui_content.ch_fontsize("20"),bg="red", fg="white", bd=8,command=self.modmanager).place(anchor=CENTER, y=functions.pro_size(35,1), x=functions.pro_size(50,0), width=functions.pro_size(25, 0), height=functions.pro_size(10, 1));
+		Button(hintergrund1, text=self.language("Beenden"), font=gui_content.ch_fontsize("20"),bg="blue", fg="white", bd=8,command=self.ending_game).place(anchor=CENTER, y=functions.pro_size(50,1), x=functions.pro_size(50,0), width=functions.pro_size(25, 0), height=functions.pro_size(10, 1));
+		Label(hintergrund1, text=self.language("Beta-Testers:")+"\n\n"+functions.read_file_content("data\BetaTester.txt"), bg="gold2", font=gui_content.ch_fontsize("16")).place(y=functions.pro_size(100,1), x=functions.pro_size(0,1), anchor=SW);
 
 		hintergrund1.pack();
 		self.content_frame.mainloop();
@@ -205,7 +221,7 @@ class GUI():
 				story = "<!Geschichte nicht erforscht!>";
 			else:
 				story = caracters[gg]["story"];
-			selected_caracter_disc.config(text="Geschichte: \n"+story);
+			selected_caracter_disc.config(text=self.language("Geschichte:")+" \n"+self.language(story));
 
 		X = 0;
 		ypos = X;
@@ -230,13 +246,13 @@ class GUI():
 				setattr(self, "car"+str(X)+"_img", PhotoImage(file = "content\pictures\\"+value["img"]+".gif"));
 				#img.create_image(image=getattr(self, "car"+str(X)+"_img"), 90, 90)
 				#img.create_image(100, 100, image=getattr(self, "car"+str(X)+"_background_img"))
-				Label(yx, text=key, bg="green4", font=gui_content.ch_fontsize("30")).place(x=110, y=10);
-				Label(yx, text="Spezies/Rasse: "+value["species"], font=gui_content.ch_fontsize("16"), bg="green4").place(x=110, y=55);
-				Label(yx, text="Fähigkeiten: "+abil, font=gui_content.ch_fontsize("16"), bg="green4").place(x=110, y=80);
+				Label(yx, text=self.language(key), bg="green4", font=gui_content.ch_fontsize("30")).place(x=110, y=10);
+				Label(yx, text=self.language("Spezies/Rasse")+": "+self.language(value["species"]), font=gui_content.ch_fontsize("16"), bg="green4").place(x=110, y=55);
+				Label(yx, text=self.language("Fähigkeiten")+": "+self.language(abil), font=gui_content.ch_fontsize("16"), bg="green4").place(x=110, y=80);
 
 				setattr(self, "car"+str(X)+"_choose_caracter", partial(choose_caracter, key));
 				car_checkbox[X] = IntVar();
-				gui_content.button(yx, "Select", 600, 10, getattr(self, "car"+str(X)+"_choose_caracter"), gui_content.ch_fontsize("16"), ["green", "black"], [90, 30]);
+				gui_content.button(yx, self.language("Select"), 600, 10, getattr(self, "car"+str(X)+"_choose_caracter"), gui_content.ch_fontsize("16"), ["green", "black"], [90, 30]);
 
 				yx.pack();
 				ypos += 210
@@ -263,8 +279,8 @@ class GUI():
 		selected_caracter_disc = Message(hintergrund1, text="Geschichte: \n", bg="Gold2", font=gui_content.ch_fontsize("14") ,width=600);
 		selected_caracter_disc.place(y=functions.pro_size(50,1), x=functions.pro_size(50,0), anchor=N);
 
-		Button(hintergrund1, text="Zurück", command=self.main_menu, bg="red", bd=8, font=gui_content.ch_fontsize("20")).place(anchor=W, y=functions.pro_size(75,1), x=functions.pro_size(25,0), width=functions.pro_size(25,1), height=functions.pro_size(10,0))
-		Button(hintergrund1, text="START!!!!", command=start_game, bg="green", bd=8, font=gui_content.ch_fontsize("20")).place(anchor=E, y=functions.pro_size(75,1), x=functions.pro_size(75,0), width=functions.pro_size(25,1), height=functions.pro_size(10,0))
+		Button(hintergrund1, text=self.language("Zurück"), command=self.main_menu, bg="red", bd=8, font=gui_content.ch_fontsize("20")).place(anchor=W, y=functions.pro_size(75,1), x=functions.pro_size(25,0), width=functions.pro_size(25,1), height=functions.pro_size(10,0))
+		Button(hintergrund1, text=self.language("START!!!!"), command=start_game, bg="green", bd=8, font=gui_content.ch_fontsize("20")).place(anchor=E, y=functions.pro_size(75,1), x=functions.pro_size(75,0), width=functions.pro_size(25,1), height=functions.pro_size(10,0))
 
 		hintergrund1.pack()
 		gio.place(y=functions.pro_size(5,1), x=functions.pro_size(50,0), anchor=N);

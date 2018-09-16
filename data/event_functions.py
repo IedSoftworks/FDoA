@@ -178,7 +178,7 @@ def textbox(classi, text, button):
 	
 	textbox = Canvas(hintergrund1, height=functions.pro_size(40,1), width=functions.pro_size(80,0), bg="Gold2",highlightthickness=0);
 	textbox.place(x=functions.pro_size(10,0), y=functions.pro_size(5,1));
-	Message(textbox, text=text, font=gui_content.ch_fontsize("14"), width=functions.pro_size(78,0), bg="Gold2").place(x=functions.pro_size(2,0));
+	Message(textbox, text=classi.gui.language(text), font=gui_content.ch_fontsize("14"), width=functions.pro_size(78,0), bg="Gold2").place(x=functions.pro_size(2,0));
 
 	buttonbox = Canvas(hintergrund1, height=functions.pro_size(30,1), width=functions.pro_size(50,0), bg="Gold2")
 	buttonbox.place(x=functions.pro_size(50,0), y=functions.pro_size(80,1), anchor=CENTER);
@@ -195,7 +195,7 @@ def textbox(classi, text, button):
 		except IndexError:
 			x.append("navy");
 
-		exec("Button(buttonbox, text=\""+x[0]+"\", command=classi."+x[1]+", bg=\""+x[2]+"\", width=functions.pro_size(4,0), height=functions.pro_size(0.6,1), font=gui_content.ch_fontsize(\"16\"), fg=\"white\").grid(row=rowx, column=columnx)");
+		exec("Button(buttonbox, text=\""+classi.gui.language(x[0])+"\", command=classi."+x[1]+", bg=\""+x[2]+"\", width=functions.pro_size(4,0), height=functions.pro_size(0.6,1), font=gui_content.ch_fontsize(\"16\"), fg=\"white\").grid(row=rowx, column=columnx)");
 	classi.gui.hook.onScreenReload.fire(hintergrund1);
 def fight_screen(classi, content):
 	class selfi():
